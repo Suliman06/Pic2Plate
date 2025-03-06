@@ -1,10 +1,34 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart'; // 🔹 Add this
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // 🔹 Sign Up User
+  // 🔹 Validate Password
+  String? validatePassword(String password) {
+    if (!RegExp(r'^(?=.*[a-z])').hasMatch(password)) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    if (!RegExp(r'^(?=.*[A-Z])').hasMatch(password)) {
+      return 'Password must contain at least one uppercase letter';
+    }
+    if (!RegExp(r'^(?=.*\d)').hasMatch(password)) {
+      return 'Password must contain at least one number';
+    }
+    return null; // ✅ Password is valid
+  }
+
+  // 🔹 Sign Up User with Password Validation
   Future<User?> signUp(String email, String password) async {
+    String? validationError = validatePassword(password);
+    
+    if (validationError != null) {
+      throw FirebaseAuthException(
+        code: 'invalid-password',
+        message: validationError,
+      );
+    }
+
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -12,7 +36,7 @@ class AuthService {
       );
       return userCredential.user;
     } catch (e) {
-      print("🔥 Sign Up Error: $e");
+      print("Sign Up Error: $e");
       return null;
     }
   }
@@ -26,7 +50,7 @@ class AuthService {
       );
       return userCredential.user;
     } catch (e) {
-      print("🔥 Sign In Error: $e");
+      print("Sign In Error: $e");
       return null;
     }
   }

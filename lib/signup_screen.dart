@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'auth_service.dart';
 import 'firestore_service.dart';
 import 'home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // 🔹 Import FirebaseAuthException
+
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -21,25 +23,43 @@ class _SignupScreenState extends State<SignupScreen> {
     String password = _passwordController.text.trim();
 
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      print("🔥 Please enter all fields");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Please enter all fields"),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
 
-    final user = await _authService.signUp(email, password);
+    try {
+      final user = await _authService.signUp(email, password);
 
-    if (user != null) {
-    // 🔹 Save user data in Firestore using new structure
-    await _firestoreService.saveUserData(user.uid, email, name);
-    
-    print("✅ User Registered: ${user.email}");
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );
-  } else {
-    print("🔥 Sign-Up Failed!");
+      if (user != null) {
+        // 🔹 Save user data in Firestore
+        await _firestoreService.saveUserData(user.uid, email, name);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Sign-Up Successful!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("${e.message}"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
