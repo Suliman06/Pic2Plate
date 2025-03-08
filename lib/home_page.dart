@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'auth_service.dart';
 import 'widgets/category_tile.dart'; // Import CategoryTile
 import 'widgets/recipe_card.dart'; // Import RecipeCard
 import 'history_page.dart'; // Import HistoryPage
@@ -8,31 +9,37 @@ import 'more_page.dart'; // Import MorePage
 class HomePage extends StatefulWidget {
   final bool isPremiumUser;
 
-  const HomePage({super.key, required this.isPremiumUser});
+  const HomePage({Key? key, this.isPremiumUser = false}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  final AuthService _authService = AuthService();
   int _selectedIndex = 0; // Track the selected index for bottom navigation
 
   // List of pages to display
-  final List<Widget> _pages = [
-    HomeContent(), // Dashboard
-    HistoryPage(), // History
-    FavouritesPage(), // Favourites
-  ];
+  late List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      HomeContent(isPremiumUser: widget.isPremiumUser), // Dashboard
+      HistoryPage(), // History
+      FavouritesPage(), // Favourites
+    ];
+  }
 
   void _onItemTapped(int index) {
     if (index == 3) {
-      // Navigate to the MorePage when the "More" tab is clicked
+      // Navigate to the MorePage when "More" tab is clicked
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => MorePage()),
       );
     } else {
-      // Update the selected index for other tabs
       setState(() {
         _selectedIndex = index;
       });
@@ -46,13 +53,19 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.green[600],
         title: Text("Dashboard", style: TextStyle(color: Colors.white)),
         actions: [
-          IconButton(icon: Icon(Icons.person, color: Colors.white), onPressed: () {}),
+          IconButton(
+            icon: Icon(Icons.logout, color: Colors.white),
+            onPressed: () {
+              _authService.signOut();
+              Navigator.pushReplacementNamed(context, "/auth");
+            },
+          ),
         ],
       ),
-      body: _pages[_selectedIndex], // Display the selected page
+      body: _pages[_selectedIndex], // Display selected page
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex, // Highlight the selected item
+        currentIndex: _selectedIndex, // Highlight selected item
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped, // Handle item taps
@@ -67,8 +80,12 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// Your existing home content
+// Home Content with Premium User Check
 class HomeContent extends StatelessWidget {
+  final bool isPremiumUser;
+
+  const HomeContent({Key? key, required this.isPremiumUser}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -76,7 +93,6 @@ class HomeContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Calorie Tracker
           Text("Daily Calorie Intake", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
           Container(
@@ -95,7 +111,11 @@ class HomeContent extends StatelessWidget {
           ),
           SizedBox(height: 20),
 
-          // Categories Grid
+          if (isPremiumUser) ...[
+            Text("🎉 You are a Premium User! 🎉", style: TextStyle(fontSize: 18, color: Colors.green)),
+            SizedBox(height: 20),
+          ],
+
           Text("Categories", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
           GridView.count(
@@ -113,7 +133,6 @@ class HomeContent extends StatelessWidget {
           ),
           SizedBox(height: 20),
 
-          // Featured Recipes
           Text("Featured Recipes", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
           SingleChildScrollView(
