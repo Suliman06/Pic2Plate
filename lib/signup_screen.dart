@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'auth_service.dart';
 import 'firestore_service.dart';
-import 'home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // 🔹 Import FirebaseAuthException
+import 'gdpr_consent_screen.dart';
+
 
 
 class SignupScreen extends StatefulWidget {
@@ -45,10 +46,15 @@ class _SignupScreenState extends State<SignupScreen> {
             backgroundColor: Colors.green,
           ),
         );
-
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(
+            builder: (context) => GDPRConsentScreen(
+              userId: user.uid,
+              email: email,
+              name: name,
+            ),
+          ),
         );
       }
     } on FirebaseAuthException catch (e) {

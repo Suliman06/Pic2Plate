@@ -9,7 +9,7 @@ import 'more_page.dart'; // Import MorePage
 class HomePage extends StatefulWidget {
   final bool isPremiumUser;
 
-  const HomePage({Key? key, this.isPremiumUser = false}) : super(key: key);
+  const HomePage({super.key, this.isPremiumUser = false});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
 class HomeContent extends StatelessWidget {
   final bool isPremiumUser;
 
-  const HomeContent({Key? key, required this.isPremiumUser}) : super(key: key);
+  const HomeContent({super.key, required this.isPremiumUser});
 
   @override
   Widget build(BuildContext context) {
