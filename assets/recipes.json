@@ -1,0 +1,414 @@
+{
+  "Breakfast": [
+    {
+      "title": "Avocado Toast",
+      "calories": "250 kcal",
+      "description": "A healthy and delicious breakfast option with avocado on whole-grain toast.",
+      "ingredients": [
+        "1 ripe avocado",
+        "2 slices of whole-grain bread",
+        "1 tablespoon olive oil",
+        "Salt and pepper to taste"
+      ],
+      "steps": [
+        "Toast the bread until golden brown.",
+        "Mash the avocado in a bowl and mix with olive oil, salt, and pepper.",
+        "Spread the avocado mixture on the toast.",
+        "Serve immediately."
+      ],
+      "isVegetarian": true,
+      "allergens": []
+    },
+    {
+      "title": "Pancakes",
+      "calories": "300 kcal",
+      "description": "Fluffy pancakes served with maple syrup and butter.",
+      "ingredients": [
+        "1 cup flour",
+        "1 tablespoon sugar",
+        "1 teaspoon baking powder",
+        "1 cup milk",
+        "1 egg"
+      ],
+      "steps": [
+        "Mix the dry ingredients in a bowl.",
+        "Add the milk and egg, and whisk until smooth.",
+        "Heat a pan and pour the batter to form pancakes.",
+        "Cook until golden brown on both sides.",
+        "Serve with maple syrup and butter."
+      ],
+      "isVegetarian": true,
+      "allergens": ["Eggs", "Milk"]
+    },
+    {
+      "title": "Smoothie Bowl",
+      "calories": "200 kcal",
+      "description": "A refreshing and nutritious smoothie bowl topped with fruits and granola.",
+      "ingredients": [
+        "1 banana",
+        "1/2 cup frozen berries",
+        "1/2 cup almond milk",
+        "1 tablespoon honey",
+        "Toppings: granola, sliced fruits, chia seeds"
+      ],
+      "steps": [
+        "Blend the banana, frozen berries, almond milk, and honey until smooth.",
+        "Pour the smoothie into a bowl.",
+        "Top with granola, sliced fruits, and chia seeds.",
+        "Serve immediately."
+      ],
+      "isVegetarian": true,
+      "allergens": []
+    },
+
+      {
+        "title": "Blueberry Oatmeal",
+        "calories": "300 kcal",
+        "description": "A warm and comforting bowl of oatmeal topped with fresh blueberries.",
+        "ingredients": [
+          "1/2 cup rolled oats",
+          "1 cup milk (or almond milk)",
+          "1/4 cup fresh blueberries",
+          "1 tablespoon honey",
+          "1/4 teaspoon cinnamon"
+        ],
+        "steps": [
+          "In a saucepan, combine oats and milk. Cook over medium heat until the oats are soft and the mixture thickens.",
+          "Pour the oatmeal into a bowl.",
+          "Top with fresh blueberries, honey, and a sprinkle of cinnamon.",
+          "Serve warm."
+        ],
+        "isVegetarian": true,
+        "allergens": ["Milk"]
+      },
+      {
+        "title": "Vegan Breakfast Burrito",
+        "calories": "350 kcal",
+        "description": "A hearty and flavorful vegan burrito filled with tofu scramble and veggies.",
+        "ingredients": [
+          "1/2 block firm tofu",
+          "1/4 cup black beans",
+          "1/4 cup diced bell peppers",
+          "1/4 cup diced onions",
+          "1 whole wheat tortilla",
+          "1 tablespoon olive oil",
+          "1/4 teaspoon turmeric",
+          "Salt and pepper to taste"
+        ],
+        "steps": [
+          "Heat olive oil in a pan. Add diced onions and bell peppers, and sauté until soft.",
+          "Crumble the tofu into the pan and add turmeric, salt, and pepper. Cook until the tofu is heated through.",
+          "Warm the tortilla in a separate pan.",
+          "Place the tofu scramble and black beans on the tortilla and roll it up.",
+          "Serve immediately."
+        ],
+        "isVegetarian": true,
+        "allergens": []
+      }
+  ],
+
+  "Lunch": [
+    {
+      "title": "Grilled Chicken",
+      "calories": "400 kcal",
+      "description": "Juicy grilled chicken breast with a side of vegetables.",
+      "ingredients": [
+        "2 chicken breasts",
+        "1 tablespoon olive oil",
+        "1 teaspoon paprika",
+        "Salt and pepper to taste"
+      ],
+      "steps": [
+        "Preheat the grill to medium-high heat.",
+        "Season the chicken breasts with olive oil, paprika, salt, and pepper.",
+        "Grill the chicken for 6-7 minutes on each side.",
+        "Serve with your favorite vegetables."
+      ],
+      "isVegetarian": false,
+      "allergens": []
+    },
+    {
+      "title": "Caesar Salad",
+      "calories": "350 kcal",
+      "description": "A classic Caesar salad with crispy romaine lettuce, croutons, and Parmesan cheese.",
+      "ingredients": [
+        "1 head romaine lettuce",
+        "1/2 cup croutons",
+        "1/4 cup grated Parmesan cheese",
+        "2 tablespoons Caesar dressing",
+        "1 tablespoon olive oil"
+      ],
+      "steps": [
+        "Wash and chop the romaine lettuce.",
+        "Toss the lettuce with croutons and Parmesan cheese.",
+        "Drizzle with Caesar dressing and olive oil.",
+        "Serve immediately."
+      ],
+      "isVegetarian": true,
+      "allergens": ["Dairy"]
+    },
+    {
+      "title": "Vegetable Stir-Fry",
+      "calories": "300 kcal",
+      "description": "A quick and healthy stir-fry with mixed vegetables and soy sauce.",
+      "ingredients": [
+        "1 cup broccoli florets",
+        "1 bell pepper, sliced",
+        "1 carrot, sliced",
+        "1 tablespoon soy sauce",
+        "1 tablespoon olive oil"
+      ],
+      "steps": [
+        "Heat olive oil in a pan over medium heat.",
+        "Add the broccoli, bell pepper, and carrot, and stir-fry for 5-7 minutes.",
+        "Add soy sauce and stir to combine.",
+        "Serve hot."
+      ],
+      "isVegetarian": true,
+      "allergens": []
+    },
+    {
+      "title": "Quinoa Salad",
+      "calories": "320 kcal",
+      "description": "A light and refreshing salad with quinoa, vegetables, and a lemon dressing.",
+      "ingredients": [
+        "1/2 cup cooked quinoa",
+        "1/4 cup cherry tomatoes, halved",
+        "1/4 cup cucumber, diced",
+        "1/4 cup feta cheese",
+        "1 tablespoon olive oil",
+        "1 tablespoon lemon juice",
+        "Salt and pepper to taste"
+      ],
+      "steps": [
+        "In a large bowl, combine cooked quinoa, cherry tomatoes, cucumber, and feta cheese.",
+        "In a small bowl, whisk together olive oil, lemon juice, salt, and pepper.",
+        "Pour the dressing over the salad and toss to combine.",
+        "Serve chilled."
+      ],
+      "isVegetarian": true,
+      "allergens": ["Dairy"]
+    },
+    {
+      "title": "Chicken Wrap",
+      "calories": "400 kcal",
+      "description": "A quick and easy wrap filled with grilled chicken, lettuce, and a tangy sauce.",
+      "ingredients": [
+        "1 grilled chicken breast, sliced",
+        "1 whole wheat tortilla",
+        "1/4 cup shredded lettuce",
+        "1 tablespoon mayonnaise",
+        "1 tablespoon mustard",
+        "1/4 teaspoon paprika"
+      ],
+      "steps": [
+        "In a small bowl, mix mayonnaise, mustard, and paprika to create the sauce.",
+        "Spread the sauce evenly over the tortilla.",
+        "Layer the sliced chicken and shredded lettuce on the tortilla.",
+        "Roll up the tortilla tightly and slice in half.",
+        "Serve immediately."
+      ],
+      "isVegetarian": false,
+      "allergens": ["Eggs"]
+    }
+  ],
+  "Dinner": [
+    {
+      "title": "Spaghetti Bolognese",
+      "calories": "500 kcal",
+      "description": "A hearty Italian pasta dish with a rich meat sauce.",
+      "ingredients": [
+        "200g spaghetti",
+        "200g ground beef",
+        "1 onion, chopped",
+        "1 can tomato sauce",
+        "1 tablespoon olive oil"
+      ],
+      "steps": [
+        "Cook the spaghetti according to package instructions.",
+        "Heat olive oil in a pan and sauté the onion until translucent.",
+        "Add the ground beef and cook until browned.",
+        "Stir in the tomato sauce and simmer for 10 minutes.",
+        "Serve the sauce over the cooked spaghetti."
+      ],
+      "isVegetarian": false,
+      "allergens": []
+    },
+    {
+      "title": "Grilled Salmon",
+      "calories": "450 kcal",
+      "description": "Perfectly grilled salmon with a side of steamed vegetables.",
+      "ingredients": [
+        "2 salmon fillets",
+        "1 tablespoon olive oil",
+        "1 teaspoon lemon juice",
+        "Salt and pepper to taste"
+      ],
+      "steps": [
+        "Preheat the grill to medium-high heat.",
+        "Season the salmon fillets with olive oil, lemon juice, salt, and pepper.",
+        "Grill the salmon for 4-5 minutes on each side.",
+        "Serve with steamed vegetables."
+      ],
+      "isVegetarian": false,
+      "allergens": ["Fish"]
+    },
+    {
+      "title": "Vegetable Lasagna",
+      "calories": "400 kcal",
+      "description": "A delicious vegetarian lasagna with layers of vegetables and cheese.",
+      "ingredients": [
+        "6 lasagna sheets",
+        "1 cup ricotta cheese",
+        "1 cup marinara sauce",
+        "1 cup mixed vegetables (zucchini, spinach, mushrooms)",
+        "1/2 cup grated mozzarella cheese"
+      ],
+      "steps": [
+        "Preheat the oven to 375°F (190°C).",
+        "Layer the lasagna sheets, ricotta cheese, marinara sauce, and vegetables in a baking dish.",
+        "Top with mozzarella cheese.",
+        "Bake for 25-30 minutes until golden and bubbly.",
+        "Serve hot."
+      ],
+      "isVegetarian": true,
+      "allergens": ["Dairy"]
+    },
+    {
+      "title": "Vegetable Curry",
+      "calories": "380 kcal",
+      "description": "A flavorful and aromatic vegetable curry served with rice.",
+      "ingredients": [
+        "1 cup mixed vegetables (carrots, peas, potatoes)",
+        "1/2 cup coconut milk",
+        "1 tablespoon curry powder",
+        "1 tablespoon olive oil",
+        "1/2 cup cooked rice",
+        "1/4 teaspoon turmeric",
+        "Salt to taste"
+      ],
+      "steps": [
+        "Heat olive oil in a pan. Add the mixed vegetables and sauté for 5 minutes.",
+        "Add curry powder, turmeric, and salt. Stir to coat the vegetables.",
+        "Pour in the coconut milk and simmer for 10-15 minutes until the vegetables are tender.",
+        "Serve the curry over cooked rice."
+      ],
+      "isVegetarian": true,
+      "allergens": []
+    },
+    {
+      "title": "Beef Stir-Fry",
+      "calories": "450 kcal",
+      "description": "A quick and savory stir-fry with beef and mixed vegetables.",
+      "ingredients": [
+        "200g beef strips",
+        "1/2 cup broccoli florets",
+        "1/2 cup bell peppers, sliced",
+        "1 tablespoon soy sauce",
+        "1 tablespoon olive oil",
+        "1/4 teaspoon garlic powder"
+      ],
+      "steps": [
+        "Heat olive oil in a pan. Add beef strips and cook until browned.",
+        "Add broccoli and bell peppers, and stir-fry for 5-7 minutes.",
+        "Pour in soy sauce and sprinkle garlic powder. Stir to combine.",
+        "Serve hot."
+      ],
+      "isVegetarian": false,
+      "allergens": []
+    }
+  ],
+  "Snacks": [
+    {
+      "title": "Trail Mix",
+      "calories": "200 kcal",
+      "description": "A healthy and energizing mix of nuts, seeds, and dried fruits.",
+      "ingredients": [
+        "1/4 cup almonds",
+        "1/4 cup cashews",
+        "1/4 cup dried cranberries",
+        "1/4 cup dark chocolate chips"
+      ],
+      "steps": [
+        "Combine all the ingredients in a bowl.",
+        "Mix well and store in an airtight container.",
+        "Enjoy as a snack."
+      ],
+      "isVegetarian": true,
+      "allergens": ["Nuts"]
+    },
+    {
+      "title": "Yogurt Parfait",
+      "calories": "150 kcal",
+      "description": "A layered yogurt parfait with granola and fresh fruits.",
+      "ingredients": [
+        "1 cup Greek yogurt",
+        "1/4 cup granola",
+        "1/4 cup mixed berries",
+        "1 tablespoon honey"
+      ],
+      "steps": [
+        "Layer the Greek yogurt, granola, and mixed berries in a glass.",
+        "Drizzle with honey.",
+        "Serve immediately."
+      ],
+      "isVegetarian": true,
+      "allergens": ["Dairy"]
+    },
+    {
+      "title": "Hummus with Veggies",
+      "calories": "180 kcal",
+      "description": "A healthy snack of hummus served with fresh vegetables.",
+      "ingredients": [
+        "1/2 cup hummus",
+        "1 carrot, sliced",
+        "1 cucumber, sliced",
+        "1 bell pepper, sliced"
+      ],
+      "steps": [
+        "Slice the vegetables into sticks.",
+        "Serve the hummus in a bowl with the sliced vegetables on the side.",
+        "Enjoy as a snack."
+      ],
+      "isVegetarian": true,
+      "allergens": []
+    },
+    {
+      "title": "Energy Balls",
+      "calories": "150 kcal",
+      "description": "No-bake energy balls made with oats, peanut butter, and honey.",
+      "ingredients": [
+        "1/2 cup rolled oats",
+        "1/4 cup peanut butter",
+        "1 tablespoon honey",
+        "1/4 cup dark chocolate chips",
+        "1/4 teaspoon vanilla extract"
+      ],
+      "steps": [
+        "In a bowl, mix rolled oats, peanut butter, honey, chocolate chips, and vanilla extract.",
+        "Roll the mixture into small balls.",
+        "Refrigerate for 30 minutes to set.",
+        "Enjoy as a snack."
+      ],
+      "isVegetarian": true,
+      "allergens": ["Nuts"]
+    },
+    {
+      "title": "Cheese and Crackers",
+      "calories": "200 kcal",
+      "description": "A simple and satisfying snack of cheese and whole-grain crackers.",
+      "ingredients": [
+        "1/4 cup cheddar cheese, sliced",
+        "6 whole-grain crackers",
+        "1/4 cup grapes"
+      ],
+      "steps": [
+        "Arrange the cheese slices and crackers on a plate.",
+        "Add grapes on the side.",
+        "Serve immediately."
+      ],
+      "isVegetarian": true,
+      "allergens": ["Dairy"]
+    }
+  ]
+}

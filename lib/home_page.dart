@@ -8,6 +8,7 @@ import 'favourites_page.dart';
 import 'more_page.dart';
 import 'add_ingredients_page.dart';
 import 'recipe_details_page.dart';
+import 'category_recipes_page.dart'; //
 
 class HomePage extends StatefulWidget {
   final bool isPremiumUser;
@@ -68,6 +69,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+// HomeContent widget in home_page.dart
 class HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -103,10 +105,58 @@ class HomeContent extends StatelessWidget {
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
             children: [
-              CategoryTile(icon: Icons.breakfast_dining, title: 'Breakfast', color: Colors.orange),
-              CategoryTile(icon: Icons.lunch_dining, title: 'Lunch', color: Colors.green),
-              CategoryTile(icon: Icons.dinner_dining, title: 'Dinner', color: Colors.blue),
-              CategoryTile(icon: Icons.local_pizza, title: 'Snacks', color: Colors.purple),
+              CategoryTile(
+                icon: Icons.breakfast_dining,
+                title: 'Breakfast',
+                color: Colors.orange,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryRecipesPage(category: 'Breakfast'),
+                    ),
+                  );
+                },
+              ),
+              CategoryTile(
+                icon: Icons.lunch_dining,
+                title: 'Lunch',
+                color: Colors.green,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryRecipesPage(category: 'Lunch'),
+                    ),
+                  );
+                },
+              ),
+              CategoryTile(
+                icon: Icons.dinner_dining,
+                title: 'Dinner',
+                color: Colors.blue,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryRecipesPage(category: 'Dinner'),
+                    ),
+                  );
+                },
+              ),
+              CategoryTile(
+                icon: Icons.local_pizza,
+                title: 'Snacks',
+                color: Colors.purple,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryRecipesPage(category: 'Snacks'),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
           SizedBox(height: 20),
