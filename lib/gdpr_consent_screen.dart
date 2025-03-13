@@ -7,11 +7,11 @@ class GDPRConsentScreen extends StatefulWidget {
   final String name;
 
   const GDPRConsentScreen({
-    Key? key,
+    super.key,
     required this.userId,
     required this.email,
     required this.name
-  }) : super(key: key);
+  });
 
   @override
   _GDPRConsentScreenState createState() => _GDPRConsentScreenState();
@@ -146,16 +146,16 @@ class _GDPRConsentScreenState extends State<GDPRConsentScreen> {
             Center(
               child: ElevatedButton(
                 onPressed: _proceedToApp,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[600],
+                  foregroundColor: Colors.white,
+                ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   child: Text(
                     "Accept & Continue",
                     style: TextStyle(fontSize: 16),
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[600],
-                  foregroundColor: Colors.white,
                 ),
               ),
             ),

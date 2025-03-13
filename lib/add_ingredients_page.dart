@@ -1,6 +1,28 @@
 import 'package:flutter/material.dart';
+import 'recipe_search_page.dart';
 
-class AddIngredientsPage extends StatelessWidget {
+class AddIngredientsPage extends StatefulWidget {
+  @override
+  _AddIngredientsPageState createState() => _AddIngredientsPageState();
+}
+
+class _AddIngredientsPageState extends State<AddIngredientsPage> {
+  List<String> selectedIngredients = []; // Stores selected ingredients
+
+  void _addIngredient(String ingredient) {
+    if (!selectedIngredients.contains(ingredient)) {
+      setState(() {
+        selectedIngredients.add(ingredient);
+      });
+    }
+  }
+
+  void _removeIngredient(String ingredient) {
+    setState(() {
+      selectedIngredients.remove(ingredient);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,31 +51,27 @@ class AddIngredientsPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            // Add with Camera Button
-            Center(
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[600],
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  elevation: 2,
+
+            // Selected Ingredients Display
+            if (selectedIngredients.isNotEmpty)
+              Container(
+                padding: EdgeInsets.all(10),
+                color: Colors.green[50],
+                child: Wrap(
+                  spacing: 8,
+                  children: selectedIngredients
+                      .map((ingredient) => Chip(
+                    label: Text(ingredient),
+                    deleteIcon: Icon(Icons.close),
+                    onDeleted: () => _removeIngredient(ingredient),
+                    backgroundColor: Colors.green[200],
+                  ))
+                      .toList(),
                 ),
-                icon: Icon(Icons.camera_alt),
-                label: Text("Add with Camera"),
-                onPressed: () {
-                  // Show notification (SnackBar) that the feature is under development
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("We are still working on this part of the program!"),
-                      backgroundColor: Colors.green[600],
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
               ),
-            ),
+
             SizedBox(height: 20),
+
             // Categories Section
             Text("Categories", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[800])),
             SizedBox(height: 10),
@@ -79,6 +97,40 @@ class AddIngredientsPage extends StatelessWidget {
                 ],
               ),
             ),
+
+            // Search Recipes Button
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[600],
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  elevation: 2,
+                ),
+                icon: Icon(Icons.search),
+                label: Text("Search Recipes"),
+                onPressed: () {
+                  if (selectedIngredients.isNotEmpty) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RecipeSearchPage(userIngredients: selectedIngredients),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Please select at least one ingredient."),
+                        backgroundColor: Colors.red,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -100,7 +152,11 @@ class AddIngredientsPage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => CategoryPage(category: label)),
-        );
+        ).then((selectedIngredient) {
+          if (selectedIngredient != null) {
+            _addIngredient(selectedIngredient);
+          }
+        });
       },
     );
   }
@@ -133,7 +189,7 @@ class CategoryPage extends StatelessWidget {
               trailing: IconButton(
                 icon: Icon(Icons.add, color: Colors.green[600]),
                 onPressed: () {
-                  // Logic to add ingredient
+                  Navigator.pop(context, items[index]); // Return selected ingredient
                 },
               ),
             ),

@@ -31,12 +31,14 @@ class RecipeDetailsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Recipe Description
               Text(
                 description,
                 style: TextStyle(fontSize: 16, color: Colors.grey[700]),
               ),
               SizedBox(height: 20),
 
+              // Allergens and Vegetarian Tags
               Wrap(
                 spacing: 10,
                 children: [
@@ -48,6 +50,7 @@ class RecipeDetailsPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
 
+              // Ingredients Section
               Text(
                 "Ingredients",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[800]),
@@ -56,6 +59,7 @@ class RecipeDetailsPage extends StatelessWidget {
               ...ingredients.map((ingredient) => _buildListItem(ingredient)).toList(),
               SizedBox(height: 20),
 
+              // Steps Section
               Text(
                 "Steps",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[800]),
@@ -69,6 +73,7 @@ class RecipeDetailsPage extends StatelessWidget {
     );
   }
 
+  // Helper method to build a tag
   Widget _buildTag(String label, Color color) {
     return Chip(
       label: Text(label, style: TextStyle(color: Colors.white)),
