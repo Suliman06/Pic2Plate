@@ -75,7 +75,6 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
             return Center(child: Text("No recipes found."));
           }
 
-          // Get the filtered recipes based on the user's ingredients
           final filteredRecipes = getFilteredRecipes(snapshot.data!);
 
           return filteredRecipes.isEmpty

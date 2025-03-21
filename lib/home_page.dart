@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     HomeContent(),
     HistoryPage(),
-    Container(), // Placeholder for Add Ingredients button
+    Container(),
     FavouritesPage(),
     MorePage(),
   ];
@@ -69,7 +69,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// HomeContent widget in home_page.dart
 class HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -89,7 +88,7 @@ class HomeContent extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Consumed: 1200 kcal", style: TextStyle(fontSize: 16)),
+                Text("Consumed: 0 kcal", style: TextStyle(fontSize: 16)),
                 Text("Goal: 2000 kcal", style: TextStyle(fontSize: 16)),
               ],
             ),
@@ -168,7 +167,7 @@ class HomeContent extends StatelessWidget {
             child: Row(
               children: [
                 RecipeCard(
-                  image: 'https://via.placeholder.com/150',
+                  image: "assets/images/avocado-toast.png",
                   title: 'Avocado Toast',
                   calories: '250 kcal',
                   onTap: () {
@@ -198,7 +197,7 @@ class HomeContent extends StatelessWidget {
                   },
                 ),
                 RecipeCard(
-                  image: 'https://via.placeholder.com/150',
+                  image: "assets/images/grilled-chicken.png",
                   title: 'Grilled Chicken',
                   calories: '400 kcal',
                   onTap: () {
@@ -228,7 +227,7 @@ class HomeContent extends StatelessWidget {
                   },
                 ),
                 RecipeCard(
-                  image: 'https://via.placeholder.com/150',
+                  image: "assets/images/vegan-salad.png",
                   title: 'Vegan Salad',
                   calories: '300 kcal',
                   onTap: () {
