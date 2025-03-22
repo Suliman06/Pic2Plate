@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'auth_service.dart';
 import 'firestore_service.dart';
 import 'home_page.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // 🔹 Import FirebaseAuthException
+import 'package:firebase_auth/firebase_auth.dart'; 
 import 'gdpr_consent_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -36,7 +36,7 @@ class _SignupScreenState extends State<SignupScreen> {
       final user = await _authService.signUp(email, password);
 
       if (user != null) {
-        // 🔹 Save user data in Firestore
+        
         await _firestoreService.saveUserData(user.uid, email, name);
 
         ScaffoldMessenger.of(context).showSnackBar(
