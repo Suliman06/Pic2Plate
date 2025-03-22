@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // 🔹 Save User Data on Sign Up
   Future<void> saveUserData(String userId, String email, String name) async {
     try {
       await _db.collection("Users").doc(userId).set({
@@ -16,13 +15,13 @@ class FirestoreService {
         "createdAt": FieldValue.serverTimestamp(),
         "updatedAt": FieldValue.serverTimestamp(),
       });
-      print("✅ User data saved successfully");
+      print("User data saved successfully");
     } catch (e) {
-      print("🔥 Firestore Error: $e");
+      print(" Firestore Error: $e");
     }
   }
 
-  // 🔹 Get User Data
+  //  Get User Data
   Future<DocumentSnapshot> getUserData(String userId) async {
     return await _db.collection("Users").doc(userId).get();
   }
