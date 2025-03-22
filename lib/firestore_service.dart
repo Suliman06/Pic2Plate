@@ -1,9 +1,10 @@
+// Service for interacting with Firestore user data
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // 🔹 Save User Data on Sign Up
+  // Save user profile data on sign up
   Future<void> saveUserData(String userId, String email, String name) async {
     try {
       await _db.collection("Users").doc(userId).set({
@@ -22,7 +23,7 @@ class FirestoreService {
     }
   }
 
-  // 🔹 Get User Data
+  // Retrieve user profile document by userId
   Future<DocumentSnapshot> getUserData(String userId) async {
     return await _db.collection("Users").doc(userId).get();
   }

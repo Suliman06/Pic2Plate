@@ -1,10 +1,11 @@
+// Service for handling user authentication using Firebase Auth
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart'; // 🔹 Add this
+import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // 🔹 Validate Password
+  // Validate password rules: must include uppercase, lowercase, number
   String? validatePassword(String password) {
     if (!RegExp(r'^(?=.*[a-z])').hasMatch(password)) {
       return 'Password must contain at least one lowercase letter';
@@ -15,13 +16,13 @@ class AuthService {
     if (!RegExp(r'^(?=.*\d)').hasMatch(password)) {
       return 'Password must contain at least one number';
     }
-    return null; // ✅ Password is valid
+    return null; // Valid password
   }
 
-  // 🔹 Sign Up User with Password Validation
+  // Register user with email and password after validation
   Future<User?> signUp(String email, String password) async {
     String? validationError = validatePassword(password);
-    
+
     if (validationError != null) {
       throw FirebaseAuthException(
         code: 'invalid-password',
@@ -41,7 +42,7 @@ class AuthService {
     }
   }
 
-  // 🔹 Log In User
+  // Authenticate user with email and password
   Future<User?> signIn(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -55,12 +56,12 @@ class AuthService {
     }
   }
 
-  // 🔹 Sign Out User
+  // Sign out current user
   Future<void> signOut() async {
     await _auth.signOut();
   }
 
-  // 🔹 Get Current User
+  // Retrieve the current logged-in user
   User? getCurrentUser() {
     return _auth.currentUser;
   }
