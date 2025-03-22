@@ -4,7 +4,7 @@ import 'package:firebase_auth_platform_interface/firebase_auth_platform_interfac
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // 🔹 Validate Password
+  // Validate Password
   String? validatePassword(String password) {
     if (!RegExp(r'^(?=.*[a-z])').hasMatch(password)) {
       return 'Password must contain at least one lowercase letter';
@@ -15,10 +15,10 @@ class AuthService {
     if (!RegExp(r'^(?=.*\d)').hasMatch(password)) {
       return 'Password must contain at least one number';
     }
-    return null; // ✅ Password is valid
+    return null; // Password is valid
   }
 
-  // 🔹 Sign Up User with Password Validation
+  // Sign Up User with Password Validation
   Future<User?> signUp(String email, String password) async {
     String? validationError = validatePassword(password);
     
@@ -41,7 +41,7 @@ class AuthService {
     }
   }
 
-  // 🔹 Log In User
+  // Log In User
   Future<User?> signIn(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -55,12 +55,12 @@ class AuthService {
     }
   }
 
-  // 🔹 Sign Out User
+  // Sign Out User
   Future<void> signOut() async {
     await _auth.signOut();
   }
 
-  // 🔹 Get Current User
+  // Get Current User
   User? getCurrentUser() {
     return _auth.currentUser;
   }
