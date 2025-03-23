@@ -1,0 +1,74 @@
+Relational Table Headings :
+•	USERS ( User_ID , Name, Email, Password_Hash, Dietary_Preferences, Membership_Tier, Profile_Image, Created_At, Updated_At)
+•	RECIPES ( Recipe_ID , Title, Description, Cuisine_Type, Dietary_Type, Preparation_Time, Cooking_Time, Calories, Protein, Carbs, Fats, Meal_Time, Ingredient_IDs, Created_By, Created_At, Updated_At)
+•	INGREDIENTS ( Ingredient_ID , Name, Synonyms, Category, Image_URL, Is_Premium, Created_At)
+•	USER_INGREDIENTS ( User_Ingredient_ID , User_ID, Ingredient_ID, Quantity, Unit, Added_At)
+•	FAVORITES ( Favorite_ID , User_ID, Recipe_ID, Added_At)
+Relationships Explinications :
+To effectively handle users, recipes, and ingredients while maximizing data retrieval and security, we have created unambiguous relationships in our database structure.  Multiple recipes can be created by each user, and recipe ownership is protected by a direct relationship.  In order to create a one-to-many relationship between users and stored recipes, users can also save recipes to their favorites.  We employ a many-to-many link between recipes and ingredients to manage ingredient tracking, enabling a single item to be used in several recipes and multiple ingredients in each recipe.  The recipe documents use an assortment of ingredient IDs to do this. The UserIngredients table, which connects users to their stored ingredients, also allows users to have a personal store.  Also, our membership system distinguishes between free and premium users, making sure that, utilizing Firestore security rules, access to premium recipes is limited according to the user's membership tier.  For both free and premium users, these partnerships ensure effective data management, user customization, and smooth operation.
+
+
+Firebase Setup :
+1.	Create Collections and Documents
+Firestore organizes data into collections and documents. Each collection contains documents, and each document contains fields (key-value pairs). Here’s how to implement our tables as Firestore collections:
+
+Users Collection :
+{
+  "User_ID": "string",
+  "Name": "string",
+  "Email": "string",
+  "Password_Hash": "string",
+  "Dietary_Preferences": "array",
+  "Membership_Tier": "string",
+  "Profile_Image": "string",
+  "Created_At": "timestamp",
+  "Updated_At": "timestamp"
+}
+
+Recipes Collection :
+{
+  "Recipe_ID": "string",
+  "Title": "string",
+  "Description": "string",
+  "Cuisine_Type": "string",
+  "Dietary_Type": "string",
+  "Preparation_Time": "number",
+  "Cooking_Time": "number",
+  "Calories": "number",
+  "Protein": "number",
+  "Carbs": "number",
+  "Fats": "number",
+  "Meal_Time": "string",
+  "Ingredient_IDs": "array",
+  "Created_By": "string", // References Users.User_ID
+  "Created_At": "timestamp",
+  "Updated_At": "timestamp"
+}
+Ingredients Collection :
+{
+  "Ingredient_ID": "string",
+  "Name": "string",
+  "Synonyms": "array",
+  "Category": "string",
+  "Image_URL": "string",
+  "Is_Premium": "boolean",
+  "Created_At": "timestamp"
+}
+
+UserIngredients Collection :
+{
+  "User_Ingredient_ID": "string",
+  "User_ID": "string", // References Users.User_ID
+  "Ingredient_ID": "string", // References Ingredients.Ingredient_ID
+  "Quantity": "number",
+  "Unit": "string",
+  "Added_At": "timestamp"
+}
+
+Favorites Collection :
+{
+  "Favorite_ID": "string",
+  "User_ID": "string", // References Users.User_ID
+  "Recipe_ID": "string", // References Recipes.Recipe_ID
+  "Added_At": "timestamp"
+}
