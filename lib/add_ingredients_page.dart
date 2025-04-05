@@ -161,7 +161,7 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
                           label: Text(ingredient),
                           backgroundColor: Colors.green[100],
                           deleteIconColor: Colors.green[800],
-                          onDeleted: () => _toggleIngredient(ingredient),
+                          onDeleted: () async {_toggleIngredient(ingredient); await _saveUserIngredients();},
                         );
                       }).toList(),
                     ),

@@ -1,10 +1,13 @@
-// Page for managing ingredient categories and selecting ingredients by category
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'add_ingredients_page.dart';
 import 'auth_service.dart';
 import 'recipe_search_page.dart';
 import 'recipe_service.dart';
+import 'secrets.dart';
+import 'vision_service.dart';
+
+final visionService = VisionService(apiKey: googleVisionApiKey);
 
 class IngredientCategoriesPage extends StatefulWidget {
   @override
@@ -16,6 +19,8 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
   bool _isLoading = true;
   List<Map<String, dynamic>> _categories = [];
   List<String> _selectedIngredients = [];
+  List<String> _allIngredients = [];
+  List<String> _filteredAllIngredients = [];
   String _userId = '';
   final AuthService _authService = AuthService();
   final RecipeService _recipeService = RecipeService();
@@ -25,24 +30,21 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
     super.initState();
     _loadData();
   }
-  // Load user data and ingredient categories from Firestore
+
+  // Load user data, ingredient categories, and all ingredients from Firestore
   Future<void> _loadData() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-
       final user = await _authService.getCurrentUser();
       if (user != null) {
         _userId = user.uid;
-        
-      
         _selectedIngredients = await _recipeService.getUserIngredients(_userId);
       }
-      
-
       await _loadCategories();
+      await _loadAllIngredients();
     } catch (e) {
       print('Error loading data: $e');
     } finally {
@@ -52,11 +54,27 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
     }
   }
 
+  // Load all ingredients from Firestore
+  Future<void> _loadAllIngredients() async {
+    try {
+      final QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('ingredients').get();
+      _allIngredients = snapshot.docs
+          .map((doc) => (doc.data() as Map<String, dynamic>)['name'] as String)
+          .toList()
+        ..sort();
+      _filteredAllIngredients = List.from(_allIngredients);
+    } catch (e) {
+      print('Error loading all ingredients: $e');
+      _allIngredients = [];
+      _filteredAllIngredients = [];
+    }
+  }
+
   // Load ingredient categories from Firestore or use defaults
   Future<void> _loadCategories() async {
     try {
-      // Get categories from Firestore
-      final QuerySnapshot snapshot = 
+      final QuerySnapshot snapshot =
           await FirebaseFirestore.instance.collection('ingredientCategories').get();
       
       _categories = snapshot.docs.map((doc) {
@@ -64,28 +82,26 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
           'id': doc.id,
           'name': doc['name'] as String,
           'icon': doc['icon'] as String? ?? 'restaurant',
-          'color': doc['color'] as String? ?? '4CAF50', // Default green
+          'color': doc['color'] as String? ?? '4CAF50', 
         };
       }).toList();
 
-      // If no categories exist in Firestore, create default ones
       if (_categories.isEmpty) {
-  _categories = [
-    {'id': 'fruits', 'name': 'Fruits', 'icon': 'nutrition', 'color': 'FF9800'},
-    {'id': 'vegetables', 'name': 'Vegetables', 'icon': 'eco', 'color': '4CAF50'},
-    {'id': 'dairy', 'name': 'Dairy', 'icon': 'egg', 'color': '2196F3'},
-    {'id': 'meat', 'name': 'Meat', 'icon': 'lunch_dining', 'color': 'F44336'},
-    {'id': 'grains', 'name': 'Grains & Bread', 'icon': 'grain', 'color': 'FFC107'},
-    {'id': 'spices', 'name': 'Spices & Herbs', 'icon': 'spa', 'color': '9C27B0'},
-    {'id': 'beverages', 'name': 'Beverages', 'icon': 'local_cafe', 'color': '009688'},
-    {'id': 'snacks', 'name': 'Snacks', 'icon': 'cookie', 'color': 'FFEB3B'},
-    {'id': 'seafood', 'name': 'Seafood', 'icon': 'set_meal', 'color': '2196F3'},
-    {'id': 'bakery', 'name': 'Bakery', 'icon': 'bakery_dining', 'color': '8D6E63'},
-    {'id': 'condiments', 'name': 'Condiments', 'icon': 'kitchen', 'color': 'FFC107'},
-    {'id': 'herbs', 'name': 'Herbs', 'icon': 'eco', 'color': '388E3C'},
-  ];
-}
-
+        _categories = [
+          {'id': 'fruits', 'name': 'Fruits', 'icon': 'nutrition', 'color': 'FF9800'},
+          {'id': 'vegetables', 'name': 'Vegetables', 'icon': 'eco', 'color': '4CAF50'},
+          {'id': 'dairy', 'name': 'Dairy', 'icon': 'egg', 'color': '2196F3'},
+          {'id': 'meat', 'name': 'Meat', 'icon': 'lunch_dining', 'color': 'F44336'},
+          {'id': 'grains', 'name': 'Grains & Bread', 'icon': 'grain', 'color': 'FFC107'},
+          {'id': 'spices', 'name': 'Spices & Herbs', 'icon': 'spa', 'color': '9C27B0'},
+          {'id': 'beverages', 'name': 'Beverages', 'icon': 'local_cafe', 'color': '009688'},
+          {'id': 'snacks', 'name': 'Snacks', 'icon': 'cookie', 'color': 'FFEB3B'},
+          {'id': 'seafood', 'name': 'Seafood', 'icon': 'set_meal', 'color': '2196F3'},
+          {'id': 'bakery', 'name': 'Bakery', 'icon': 'bakery_dining', 'color': '8D6E63'},
+          {'id': 'condiments', 'name': 'Condiments', 'icon': 'kitchen', 'color': 'FFC107'},
+          {'id': 'herbs', 'name': 'Herbs', 'icon': 'eco', 'color': '388E3C'},
+        ];
+      }
     } catch (e) {
       print('Error loading categories: $e');
       // Default categories as fallback
@@ -98,18 +114,15 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
     }
   }
 
-  // convert hex color string to Color
   Color _getColorFromHex(String hexColor) {
     hexColor = hexColor.replaceAll('#', '');
     if (hexColor.length == 6) {
-      hexColor = 'FF' + hexColor; 
+      hexColor = 'FF' + hexColor;
     }
     return Color(int.parse('0x$hexColor'));
   }
 
-  //  get IconData from string
   IconData _getIconData(String iconName) {
-    // Map common icon names to Flutter's Material icons
     switch (iconName) {
       case 'eco': return Icons.eco;
       case 'nutrition': return Icons.food_bank;
@@ -130,6 +143,120 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
     }
   }
 
+  void _toggleIngredient(String ingredient) {
+    setState(() {
+      if (_selectedIngredients.contains(ingredient)) {
+        _selectedIngredients.remove(ingredient);
+      } else {
+        _selectedIngredients.add(ingredient);
+      }
+    });
+  }
+
+  Future<void> _saveUserIngredients() async {
+    try {
+      await _recipeService.saveUserIngredients(_userId, _selectedIngredients);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ingredients saved successfully'), backgroundColor: Colors.green),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save ingredients'), backgroundColor: Colors.red),
+      );
+    }
+  }
+
+  // Filter all ingredients based on the search query
+  void _filterAllIngredients(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredAllIngredients = List.from(_allIngredients);
+      } else {
+        _filteredAllIngredients = _allIngredients
+            .where((ingredient) =>
+                ingredient.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
+  // Camera button callback: uses VisionService to capture an image and detect labels.
+ void _onCameraButtonPressed() async {
+  final imageFile = await visionService.pickImage();
+  if (imageFile != null) {
+    List<String> labels = await visionService.detectLabels(imageFile);
+    if (labels.isNotEmpty) {
+      if (_allIngredients.isEmpty) {
+        await _loadAllIngredients();
+      }
+      String? matchedIngredient;
+      // Look for a match by comparing each detected label with database ingredients.
+      for (var label in labels) {
+        for (var ingredient in _allIngredients) {
+          // Use case-insensitive equality for an exact match.
+          if (ingredient.toLowerCase() == label.toLowerCase()) {
+            matchedIngredient = ingredient;
+            break;
+          }
+        }
+        if (matchedIngredient != null) break;
+      }
+      
+      if (matchedIngredient != null) {
+        // Ask the user to confirm adding the detected ingredient.
+        bool? confirm = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("Confirm Ingredient"),
+            content: Text("We detected \"$matchedIngredient\". Do you want to add it?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text("No"),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text("Yes"),
+              ),
+            ],
+          ),
+        );
+        if (confirm == true) {
+          if (!_selectedIngredients.contains(matchedIngredient)) {
+            setState(() {
+              _selectedIngredients.add(matchedIngredient!);
+            });
+            await _saveUserIngredients();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("$matchedIngredient added!"),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        }
+      } else {
+        // No detected label matches any ingredient in the database.
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("None of the detected ingredients are in our database."),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("No labels detected."),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+}
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,26 +265,39 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
         backgroundColor: Colors.green[600],
         elevation: 0,
       ),
-      body: _isLoading 
+      body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: "Search ingredients...",
-                      prefixIcon: Icon(Icons.search, color: Colors.green[600]),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide.none,
+                  // Row with search field and camera button
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: "Search ingredients...",
+                            prefixIcon: Icon(Icons.search, color: Colors.green[600]),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          ),
+                          onChanged: _filterAllIngredients,
+                        ),
                       ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    ),
+                      SizedBox(width: 8),
+                      IconButton(
+                        icon: Icon(Icons.camera_alt, color: Colors.green[600]),
+                        onPressed: _onCameraButtonPressed,
+                      ),
+                    ],
                   ),
                   SizedBox(height: 20),
                   
@@ -175,77 +315,90 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
                             .map((ingredient) => Chip(
                                   label: Text(ingredient),
                                   deleteIcon: Icon(Icons.close),
-                                  onDeleted: () {
-                                    setState(() {
-                                      _selectedIngredients.remove(ingredient);
-                                    });
+                                  onDeleted: () async {
+                                    _toggleIngredient(ingredient);
+                                    await _saveUserIngredients();
                                   },
                                   backgroundColor: Colors.green[200],
                                 ))
                             .toList(),
                       ),
                     ),
-                  
                   SizedBox(height: 20),
                   
-                  // Categories Title
-                  Text(
-                    "Categories", 
-                    style: TextStyle(
-                      fontSize: 20, 
-                      fontWeight: FontWeight.bold, 
-                      color: Colors.green[800]
-                    )
-                  ),
-                  
-                  SizedBox(height: 10),
-                  
-                  Expanded(
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, 
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 2.5, 
+                  // Conditionally show either the grid of categories or a list of matching ingredients
+                  if (_searchController.text.isNotEmpty)
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _filteredAllIngredients.length,
+                        itemBuilder: (context, index) {
+                          final ingredient = _filteredAllIngredients[index];
+                          return ListTile(
+                            title: Text(ingredient),
+                            onTap: () {
+                              _toggleIngredient(ingredient);
+                              _saveUserIngredients();
+                            },
+                          );
+                        },
                       ),
-                      itemCount: _categories.length,
-                      itemBuilder: (context, index) {
-                        final category = _categories[index];
-                        final Color categoryColor = _getColorFromHex(category['color']);
-                        
-                        return ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: categoryColor.withOpacity(0.9),
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)
-                            ),
-                            elevation: 2,
-                          ),
-                          icon: Icon(_getIconData(category['icon'])),
-                          label: Text(
-                            category['name'], 
-                            style: TextStyle(fontSize: 16)
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context, 
-                              MaterialPageRoute(
-                                builder: (context) => CategoryIngredientsPage(
-                                  categoryId: category['id'],
-                                  categoryName: category['name'],
-                                  categoryColor: categoryColor,
-                                ),
-                              ),
-                            ).then((value) {
-                              _loadData();
-                            });
-                          },
-                        );
-                      },
+                    )
+                  else ...[
+                    Text(
+                      "Categories",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green[800],
+                      ),
                     ),
-                  ),
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 2.5,
+                        ),
+                        itemCount: _categories.length,
+                        itemBuilder: (context, index) {
+                          final category = _categories[index];
+                          final Color categoryColor = _getColorFromHex(category['color']);
+                          return ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: categoryColor.withOpacity(0.9),
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              elevation: 2,
+                            ),
+                            icon: Icon(_getIconData(category['icon'])),
+                            label: Text(
+                              category['name'],
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CategoryIngredientsPage(
+                                    categoryId: category['id'],
+                                    categoryName: category['name'],
+                                    categoryColor: categoryColor,
+                                  ),
+                                ),
+                              ).then((value) {
+                                _loadData();
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -301,10 +454,8 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
       final user = await _authService.getCurrentUser();
       if (user != null) {
         _userId = user.uid;
-        
         // Load category ingredients from Firestore
         await _loadCategoryIngredients();
-        
         // Load user's previously selected ingredients
         await _loadUserIngredients(_userId);
       }
@@ -331,7 +482,7 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
       _categoryIngredients = snapshot.docs
           .map((doc) => doc['name'] as String)
           .toList()
-        ..sort(); // Sort alphabetically
+        ..sort();
       
       _filteredIngredients = List.from(_categoryIngredients);
     } catch (e) {
@@ -356,7 +507,7 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
         _filteredIngredients = List.from(_categoryIngredients);
       } else {
         _filteredIngredients = _categoryIngredients
-            .where((ingredient) => 
+            .where((ingredient) =>
                 ingredient.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
@@ -424,11 +575,8 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
                     ),
                     onChanged: _filterIngredients,
                   ),
-                  
                   SizedBox(height: 16),
-                  
-                  // Selected ingredients chips
-                  if (_selectedIngredients.isNotEmpty && 
+                  if (_selectedIngredients.isNotEmpty &&
                       _categoryIngredients.any((i) => _selectedIngredients.contains(i)))
                     Container(
                       padding: EdgeInsets.all(10),
@@ -446,15 +594,15 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
                             label: Text(ingredient),
                             backgroundColor: widget.categoryColor.withOpacity(0.2),
                             deleteIconColor: widget.categoryColor,
-                            onDeleted: () => _toggleIngredient(ingredient),
+                            onDeleted: () async {
+                              _toggleIngredient(ingredient);
+                              await _saveUserIngredients();
+                            },
                           );
                         }).toList(),
                       ),
                     ),
-                  
                   SizedBox(height: 16),
-                  
-                  // Category ingredients list
                   Expanded(
                     child: _filteredIngredients.isEmpty
                         ? Center(
@@ -479,7 +627,6 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
                             itemBuilder: (context, index) {
                               final ingredient = _filteredIngredients[index];
                               final isSelected = _selectedIngredients.contains(ingredient);
-                              
                               return Card(
                                 margin: EdgeInsets.only(bottom: 8),
                                 elevation: 2,
@@ -519,7 +666,7 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
                   onPressed: () async {
@@ -536,7 +683,7 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
                   onPressed: _selectedIngredients.isEmpty

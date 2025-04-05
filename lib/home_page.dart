@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     MorePage(),
   ];
 
-  // Handle tab switching or opening ingredient selector
+  
   void _onItemTapped(int index) {
     if (index == 2) {
       Navigator.push(
