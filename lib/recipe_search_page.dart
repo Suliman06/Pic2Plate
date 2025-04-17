@@ -15,14 +15,31 @@ class RecipeSearchPage extends StatefulWidget {
 class _RecipeSearchPageState extends State<RecipeSearchPage> {
   final RecipeService _recipeService = RecipeService();
   late Future<List<Map<String, dynamic>>> _recipesFuture;
-  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // Load matching recipes on init
     print('Searching for recipes with ingredients: ${widget.userIngredients}');
-    _recipesFuture = _recipeService.searchRecipesByIngredients(widget.userIngredients);
+    _recipesFuture = _loadRankedRecipes();
+  }
+
+  Future<List<Map<String, dynamic>>> _loadRankedRecipes() async {
+    List<Map<String, dynamic>> recipes = await _recipeService.searchRecipesByIngredients(widget.userIngredients);
+
+    List<Map<String, dynamic>> rankedRecipes = recipes.map((recipe) {
+      List<String> ingredients = RecipeDetailsPage.ensureStringList(recipe["ingredients"]);
+      int matchCount = ingredients.where((ingredient) => widget.userIngredients.contains(ingredient)).length;
+
+      return {
+        ...recipe,
+        'matchCount': matchCount,
+        'totalIngredients': ingredients.length,
+      };
+    }).toList();
+
+    rankedRecipes.sort((a, b) => b['matchCount'].compareTo(a['matchCount']));
+
+    return rankedRecipes;
   }
 
   @override
@@ -49,22 +66,12 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
                   children: [
                     Icon(Icons.error_outline, size: 60, color: Colors.red),
                     SizedBox(height: 20),
-                    Text(
-                      "Error loading recipes",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
+                    Text("Error loading recipes", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                     SizedBox(height: 10),
-                    Text(
-                      snapshot.error.toString(),
-                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                      textAlign: TextAlign.center,
-                    ),
+                    Text(snapshot.error.toString(), style: TextStyle(fontSize: 14, color: Colors.grey[700]), textAlign: TextAlign.center),
                     SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () => Navigator.pop(context),
                       child: Text("Go Back"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[600],
@@ -86,16 +93,10 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
                   children: [
                     Icon(Icons.no_food, size: 80, color: Colors.grey),
                     SizedBox(height: 20),
-                    Text(
-                      "No recipes found with your ingredients.",
-                      style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                      textAlign: TextAlign.center,
-                    ),
+                    Text("No recipes found with your ingredients.", style: TextStyle(fontSize: 18, color: Colors.grey[700]), textAlign: TextAlign.center),
                     SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () => Navigator.pop(context),
                       child: Text("Add More Ingredients"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[600],
@@ -108,29 +109,28 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
             );
           }
 
-          final filteredRecipes = snapshot.data!;
+          final rankedRecipes = snapshot.data!;
 
           return ListView.builder(
             padding: EdgeInsets.all(16),
-            itemCount: filteredRecipes.length,
+            itemCount: rankedRecipes.length,
             itemBuilder: (context, index) {
-              final recipe = filteredRecipes[index];
-
-              // Format recipe fields safely
+              final recipe = rankedRecipes[index];
               List<String> ingredients = RecipeDetailsPage.ensureStringList(recipe["ingredients"]);
               List<String> steps = RecipeDetailsPage.ensureStringList(recipe["steps"]);
               List<String> allergens = RecipeDetailsPage.ensureStringList(recipe["allergens"]);
 
+              bool isPerfectMatch = recipe['matchCount'] == widget.userIngredients.length;
+
               return Card(
                 margin: EdgeInsets.symmetric(vertical: 8),
                 elevation: 2,
+                color: isPerfectMatch ? Colors.green[100] : null,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ListTile(
                   contentPadding: EdgeInsets.all(12),
-
-                  // Recipe image or placeholder
                   leading: recipe['image'] != null && !recipe['image'].toString().startsWith('assets')
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(8),
@@ -158,8 +158,6 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
                           ),
                           child: Icon(Icons.restaurant, color: Colors.green[700]),
                         ),
-
-                  // Title and short description
                   title: Text(
                     recipe["title"].toString(),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -198,10 +196,13 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 6),
+                      Text(
+                        "Matches ${recipe['matchCount']} of ${widget.userIngredients.length} ingredients",
+                        style: TextStyle(fontSize: 12, color: Colors.blueGrey),
+                      ),
                     ],
                   ),
-
-                  // Navigate to details
                   onTap: () {
                     Navigator.push(
                       context,

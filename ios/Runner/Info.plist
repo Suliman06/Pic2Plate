@@ -2,8 +2,33 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to capture ingredient photos for recipe suggestions.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>App requires access to your photo library.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Used for better user experience.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-228569454694-ios-c049ddca756144425775a7</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.228569454694-nbo6nh0rv6rhuvrbrl6huh1uup10gtai</string>
+			</array>
+		</dict>
+	</array>
 	<key>MinimumOSVersion</key>
 	<string>13.0</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>

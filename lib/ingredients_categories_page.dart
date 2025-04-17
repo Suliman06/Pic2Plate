@@ -82,7 +82,7 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
           'id': doc.id,
           'name': doc['name'] as String,
           'icon': doc['icon'] as String? ?? 'restaurant',
-          'color': doc['color'] as String? ?? '4CAF50', 
+          'color': doc['color'] as String? ?? '4CAF50',
         };
       }).toList();
 
@@ -104,7 +104,6 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
       }
     } catch (e) {
       print('Error loading categories: $e');
-      // Default categories as fallback
       _categories = [
         {'id': 'vegetables', 'name': 'Vegetables', 'icon': 'eco', 'color': '4CAF50'},
         {'id': 'fruits', 'name': 'Fruits', 'icon': 'nutrition', 'color': 'FF9800'},
@@ -181,81 +180,77 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
   }
 
   // Camera button callback: uses VisionService to capture an image and detect labels.
- void _onCameraButtonPressed() async {
-  final imageFile = await visionService.pickImage();
-  if (imageFile != null) {
-    List<String> labels = await visionService.detectLabels(imageFile);
-    if (labels.isNotEmpty) {
-      if (_allIngredients.isEmpty) {
-        await _loadAllIngredients();
-      }
-      String? matchedIngredient;
-      // Look for a match by comparing each detected label with database ingredients.
-      for (var label in labels) {
-        for (var ingredient in _allIngredients) {
-          // Use case-insensitive equality for an exact match.
-          if (ingredient.toLowerCase() == label.toLowerCase()) {
-            matchedIngredient = ingredient;
-            break;
-          }
+  void _onCameraButtonPressed() async {
+    final imageFile = await visionService.pickImage();
+    if (imageFile != null) {
+      List<String> labels = await visionService.detectLabels(imageFile);
+      if (labels.isNotEmpty) {
+        if (_allIngredients.isEmpty) {
+          await _loadAllIngredients();
         }
-        if (matchedIngredient != null) break;
-      }
-      
-      if (matchedIngredient != null) {
-        // Ask the user to confirm adding the detected ingredient.
-        bool? confirm = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text("Confirm Ingredient"),
-            content: Text("We detected \"$matchedIngredient\". Do you want to add it?"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text("No"),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text("Yes"),
-              ),
-            ],
-          ),
-        );
-        if (confirm == true) {
-          if (!_selectedIngredients.contains(matchedIngredient)) {
-            setState(() {
-              _selectedIngredients.add(matchedIngredient!);
-            });
-            await _saveUserIngredients();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("$matchedIngredient added!"),
-                backgroundColor: Colors.green,
-              ),
-            );
+        String? matchedIngredient;
+        // Look for a match by comparing each detected label with database ingredients.
+        for (var label in labels) {
+          for (var ingredient in _allIngredients) {
+            if (ingredient.toLowerCase() == label.toLowerCase()) {
+              matchedIngredient = ingredient;
+              break;
+            }
           }
+          if (matchedIngredient != null) break;
+        }
+        
+        if (matchedIngredient != null) {
+          // Ask the user to confirm adding the detected ingredient.
+          bool? confirm = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("Confirm Ingredient"),
+              content: Text("We detected \"$matchedIngredient\". Do you want to add it?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text("No"),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text("Yes"),
+                ),
+              ],
+            ),
+          );
+          if (confirm == true) {
+            if (!_selectedIngredients.contains(matchedIngredient)) {
+              setState(() {
+                _selectedIngredients.add(matchedIngredient!);
+              });
+              await _saveUserIngredients();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("$matchedIngredient added!"),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("None of the detected ingredients are in our database."),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       } else {
-        // No detected label matches any ingredient in the database.
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("None of the detected ingredients are in our database."),
+            content: Text("No labels detected."),
             backgroundColor: Colors.red,
           ),
         );
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("No labels detected."),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
   }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -326,24 +321,8 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
                     ),
                   SizedBox(height: 20),
                   
-                  // Conditionally show either the grid of categories or a list of matching ingredients
-                  if (_searchController.text.isNotEmpty)
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _filteredAllIngredients.length,
-                        itemBuilder: (context, index) {
-                          final ingredient = _filteredAllIngredients[index];
-                          return ListTile(
-                            title: Text(ingredient),
-                            onTap: () {
-                              _toggleIngredient(ingredient);
-                              _saveUserIngredients();
-                            },
-                          );
-                        },
-                      ),
-                    )
-                  else ...[
+                  // When there's no active search, show the categories grid along with a Find Recipes button
+                  if (_searchController.text.isEmpty) ...[
                     Text(
                       "Categories",
                       style: TextStyle(
@@ -352,6 +331,7 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
                         color: Colors.green[800],
                       ),
                     ),
+                    SizedBox(height: 10),
                     SizedBox(height: 10),
                     Expanded(
                       child: GridView.builder(
@@ -398,10 +378,79 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
                         },
                       ),
                     ),
-                  ],
+                  ]
+                  // If a search query is active, show the filtered ingredients list.
+                  else
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _filteredAllIngredients.length,
+                        itemBuilder: (context, index) {
+                          final ingredient = _filteredAllIngredients[index];
+                          return ListTile(
+                            title: Text(ingredient),
+                            onTap: () {
+                              _toggleIngredient(ingredient);
+                              _saveUserIngredients();
+                            },
+                          );
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[600],
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  onPressed: () async {
+                    await _saveUserIngredients();
+                  },
+                  child: Text("Save Ingredients"),
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[600],
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  onPressed: _selectedIngredients.isEmpty
+                      ? null
+                      : () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RecipeSearchPage(
+                                userIngredients: _selectedIngredients,
+                              ),
+                            ),
+                          );
+                        },
+                  child: Text("Find Recipes"),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
   
@@ -450,13 +499,10 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
     });
 
     try {
-      // Get current user ID
       final user = await _authService.getCurrentUser();
       if (user != null) {
         _userId = user.uid;
-        // Load category ingredients from Firestore
         await _loadCategoryIngredients();
-        // Load user's previously selected ingredients
         await _loadUserIngredients(_userId);
       }
     } catch (e) {
@@ -473,7 +519,6 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
 
   Future<void> _loadCategoryIngredients() async {
     try {
-      // Get ingredients from Firestore with category filter
       final QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('ingredients')
           .where('categoryId', isEqualTo: widget.categoryId)
@@ -627,6 +672,7 @@ class _CategoryIngredientsPageState extends State<CategoryIngredientsPage> {
                             itemBuilder: (context, index) {
                               final ingredient = _filteredIngredients[index];
                               final isSelected = _selectedIngredients.contains(ingredient);
+                              
                               return Card(
                                 margin: EdgeInsets.only(bottom: 8),
                                 elevation: 2,
