@@ -17,7 +17,6 @@ class FavouritesPage extends StatelessWidget {
             subtitle: Text("250 kcal"),
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () {
-              // Navigate to recipe details
             },
           ),
           ListTile(
@@ -26,7 +25,6 @@ class FavouritesPage extends StatelessWidget {
             subtitle: Text("400 kcal"),
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () {
-              // Navigate to recipe details
             },
           ),
           ListTile(
@@ -35,7 +33,6 @@ class FavouritesPage extends StatelessWidget {
             subtitle: Text("300 kcal"),
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () {
-              // Navigate to recipe details
             },
           ),
         ],

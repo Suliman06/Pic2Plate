@@ -1,4 +1,3 @@
-// Auth selection screen allowing user to choose between login and signup
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'signup_screen.dart';
@@ -6,7 +5,7 @@ import 'signup_screen.dart';
 class AuthSelection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print("AuthSelection Screen Loaded!"); // Debug log
+    print("AuthSelection Screen Loaded!"); 
 
     return Scaffold(
       backgroundColor: Colors.green[600],
@@ -14,7 +13,6 @@ class AuthSelection extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // App title
             Text("Pic2Plate",
                 style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white)),
             SizedBox(height: 20),
@@ -34,7 +32,6 @@ class AuthSelection extends StatelessWidget {
             ),
             SizedBox(height: 10),
 
-            // Sign Up button
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,

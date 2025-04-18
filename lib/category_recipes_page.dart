@@ -1,4 +1,4 @@
-// Page to display recipes filtered by category (e.g., Breakfast, Lunch)
+// displays recipes filtered by category
 import 'package:flutter/material.dart';
 import 'recipe_service.dart';
 import 'recipe_details_page.dart';
@@ -19,7 +19,6 @@ class _CategoryRecipesPageState extends State<CategoryRecipesPage> {
   @override
   void initState() {
     super.initState();
-    // Load recipes based on selected category
     _recipesFuture = _recipeService.getRecipesByCategory(widget.category);
   }
 
@@ -75,7 +74,6 @@ class _CategoryRecipesPageState extends State<CategoryRecipesPage> {
                 child: ListTile(
                   contentPadding: EdgeInsets.all(12),
 
-                  // Display image or icon fallback
                   leading: recipe['image'] != null && !recipe['image'].startsWith('assets')
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(8),
@@ -122,7 +120,6 @@ class _CategoryRecipesPageState extends State<CategoryRecipesPage> {
                       SizedBox(height: 6),
                       Row(
                         children: [
-                          // Vegetarian tag
                           if (recipe["isVegetarian"] == true)
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -147,7 +144,7 @@ class _CategoryRecipesPageState extends State<CategoryRecipesPage> {
                     ],
                   ),
 
-                  // On tap, navigate to recipe details page
+                  // On tap navigate to recipe details page
                   onTap: () {
                     Navigator.push(
                       context,

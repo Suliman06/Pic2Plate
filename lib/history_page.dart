@@ -35,7 +35,6 @@ class HistoryPage extends StatelessWidget {
             subtitle: Text("300 kcal"),
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () {
-              // Navigate to recipe details
             },
           ),
         ],

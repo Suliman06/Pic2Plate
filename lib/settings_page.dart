@@ -1,4 +1,3 @@
-// settings_page.dart
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -41,7 +40,6 @@ class SettingsPage extends StatelessWidget {
             title: Text("Help & Support"),
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () {
-              // Navigate to help & support
             },
           ),
         ],

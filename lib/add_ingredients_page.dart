@@ -1,4 +1,4 @@
-// Page for selecting ingredients, saving them, and navigating to recipe search
+// used for selecting ingredients, saving them, and navigating to recipe search
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'auth_service.dart';
@@ -52,7 +52,7 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
     }
   }
 
-  // Fetch all ingredients from Firestore
+  // get all ingredients from Firestore
   Future<void> _loadAvailableIngredients() async {
     try {
       final QuerySnapshot snapshot = 
@@ -95,7 +95,7 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
     });
   }
 
-  // Add/remove ingredient from selection
+  // Add or remove ingredient from selection
   void _toggleIngredient(String ingredient) {
     setState(() {
       if (_selectedIngredients.contains(ingredient)) {

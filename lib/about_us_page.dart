@@ -1,4 +1,3 @@
-// about_us_page.dart
 import 'package:flutter/material.dart';
 
 class AboutUsPage extends StatelessWidget {

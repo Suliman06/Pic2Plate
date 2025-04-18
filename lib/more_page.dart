@@ -1,9 +1,9 @@
-// more_page.dart
 import 'package:flutter/material.dart';
 import 'settings_page.dart';
 import 'about_us_page.dart';
 import 'privacy_policy_page.dart';
 import 'feedback_page.dart';
+import 'profile_page.dart'; 
 
 class MorePage extends StatelessWidget {
   @override
@@ -16,6 +16,17 @@ class MorePage extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.all(16.0),
         children: [
+          ListTile(
+            leading: Icon(Icons.account_circle, color: Colors.green),
+            title: Text("My Profile"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePage()),
+              );
+            },
+          ),
+          Divider(),
           ListTile(
             leading: Icon(Icons.settings, color: Colors.green),
             title: Text("Settings"),

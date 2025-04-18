@@ -1,10 +1,8 @@
-// Service to manage recipe and ingredient data from Firestore
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RecipeService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Normalize list input into List<String>
   List<String> _normalizeIngredientsList(dynamic ingredients) {
     if (ingredients == null) {
       return [];

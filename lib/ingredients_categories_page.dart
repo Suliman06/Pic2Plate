@@ -71,7 +71,7 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
     }
   }
 
-  // Load ingredient categories from Firestore or use defaults
+  // Load ingredient categories from Firestore / use defaults
   Future<void> _loadCategories() async {
     try {
       final QuerySnapshot snapshot =
@@ -179,7 +179,7 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
     });
   }
 
-  // Camera button callback: uses VisionService to capture an image and detect labels.
+  // Camera button callback
   void _onCameraButtonPressed() async {
     final imageFile = await visionService.pickImage();
     if (imageFile != null) {
@@ -189,7 +189,7 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
           await _loadAllIngredients();
         }
         String? matchedIngredient;
-        // Look for a match by comparing each detected label with database ingredients.
+        // Look for a match by comparing each detected label with database ingredients
         for (var label in labels) {
           for (var ingredient in _allIngredients) {
             if (ingredient.toLowerCase() == label.toLowerCase()) {
@@ -201,7 +201,7 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
         }
         
         if (matchedIngredient != null) {
-          // Ask the user to confirm adding the detected ingredient.
+          // Ask the user to confirm adding the detected ingredient
           bool? confirm = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
@@ -267,7 +267,6 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Row with search field and camera button
                   Row(
                     children: [
                       Expanded(
@@ -296,7 +295,6 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
                   ),
                   SizedBox(height: 20),
                   
-                  // Selected Ingredients Display
                   if (_selectedIngredients.isNotEmpty)
                     Container(
                       padding: EdgeInsets.all(10),
@@ -379,7 +377,7 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
                       ),
                     ),
                   ]
-                  // If a search query is active, show the filtered ingredients list.
+                  // If a search query is active, show the filtered ingredients list
                   else
                     Expanded(
                       child: ListView.builder(

@@ -1,11 +1,10 @@
-// Service for handling user authentication using Firebase Auth
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Validate password rules: must include uppercase, lowercase, number
   String? validatePassword(String password) {
     if (!RegExp(r'^(?=.*[a-z])').hasMatch(password)) {
       return 'Password must contain at least one lowercase letter';
@@ -16,10 +15,9 @@ class AuthService {
     if (!RegExp(r'^(?=.*\d)').hasMatch(password)) {
       return 'Password must contain at least one number';
     }
-    return null; // Valid password
+    return null;
   }
 
-  // Register user with email and password after validation
   Future<User?> signUp(String email, String password) async {
     String? validationError = validatePassword(password);
 
@@ -42,7 +40,6 @@ class AuthService {
     }
   }
 
-  // Authenticate user with email and password
   Future<User?> signIn(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -56,13 +53,32 @@ class AuthService {
     }
   }
 
-  // Sign out current user
   Future<void> signOut() async {
     await _auth.signOut();
   }
 
-  // Retrieve the current logged-in user
   User? getCurrentUser() {
     return _auth.currentUser;
+  }
+
+  Future<void> resetPassword(String userId, String newPassword) async {
+    try {
+      User? user = _auth.currentUser;
+
+      if (user == null) {
+        print('No signed-in user for password reset.');
+        return;
+      }
+
+      await user.updatePassword(newPassword);
+
+      await _firestore.collection('users').doc(userId).update({
+        'passwordUpdatedAt': FieldValue.serverTimestamp(),
+        'passwordResetComplete': true,
+      });
+    } catch (e) {
+      print('Error resetting password: $e');
+      throw e;
+    }
   }
 }

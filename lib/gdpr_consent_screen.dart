@@ -48,7 +48,7 @@ class _GDPRConsentScreenState extends State<GDPRConsentScreen> {
 
       // Attempt to delete user data from Firestore
       await FirebaseFirestore.instance.collection('users').doc(userId).delete().then((_) {
-        print("✅ User document deleted from Firestore.");
+        print("User document deleted from Firestore.");
       }).catchError((error) {
         print(" Error deleting user document from Firestore: $error");
       });
@@ -65,7 +65,7 @@ class _GDPRConsentScreenState extends State<GDPRConsentScreen> {
     print("Error in decline process: $e");
   }
 
-  // Navigate back to login or onboarding screen
+  // Navigate back to login 
   if (mounted) {
     Navigator.pop(context);
   }

@@ -90,7 +90,6 @@ class RecipeDetailsPage extends StatelessWidget {
     );
   }
 
-  // Create a tag-style chip
   Widget _buildTag(String label, Color color) {
     return Chip(
       label: Text(label, style: TextStyle(color: Colors.white)),
@@ -99,7 +98,6 @@ class RecipeDetailsPage extends StatelessWidget {
     );
   }
 
-  // Create a card-style list item
   Widget _buildListItem(String text) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 5),

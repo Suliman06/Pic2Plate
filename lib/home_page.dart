@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// Dashboard home content with daily summary, categories, and featured recipes
+// Dashboard home content
 class HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -121,7 +121,7 @@ class HomeContent extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CategoryRecipesPage(category: 'Breakfast'),
+                      builder: (context) => CategoryRecipesPage(category: 'breakfast'),
                     ),
                   );
                 },
@@ -134,7 +134,7 @@ class HomeContent extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CategoryRecipesPage(category: 'Lunch'),
+                      builder: (context) => CategoryRecipesPage(category: 'lunch'),
                     ),
                   );
                 },
@@ -147,7 +147,7 @@ class HomeContent extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CategoryRecipesPage(category: 'Dinner'),
+                      builder: (context) => CategoryRecipesPage(category: 'dinner'),
                     ),
                   );
                 },
@@ -160,7 +160,7 @@ class HomeContent extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CategoryRecipesPage(category: 'Snacks'),
+                      builder: (context) => CategoryRecipesPage(category: 'snacks'),
                     ),
                   );
                 },
