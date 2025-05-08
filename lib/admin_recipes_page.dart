@@ -39,8 +39,8 @@ class _AdminRecipesPageState extends State<AdminRecipesPage> {
                 margin: const EdgeInsets.only(bottom: 16),
                 child: ListTile(
                   leading: const Icon(Icons.restaurant, color: Colors.green),
-                  title: Text(recipe['name']),
-                  subtitle: Text('${recipe['calories']} kcal'),
+                  title: Text(recipe['name'] ?? 'Unnamed Recipe'),
+                  subtitle: Text('${recipe['calories'] ?? 0} kcal'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

@@ -29,8 +29,8 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                 margin: const EdgeInsets.only(bottom: 16),
                 child: ListTile(
                   leading: const Icon(Icons.person, color: Colors.blue),
-                  title: Text(user['name'] ?? 'No Name'),
-                  subtitle: Text(user['email']),
+                  title: Text(user['name'] ?? 'Unnamed User'),
+                  subtitle: Text(user['email'] ?? 'No email'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
