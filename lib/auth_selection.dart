@@ -1,52 +1,72 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
-import 'signup_screen.dart';
 
 class AuthSelection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print("AuthSelection Screen Loaded!"); 
+    print("AuthSelection Screen Loaded!");
 
     return Scaffold(
       backgroundColor: Colors.green[600],
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Pic2Plate",
-                style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.white)),
-            SizedBox(height: 20),
-
-            // Log In button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.green,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                minimumSize: Size(250, 50),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Pic2Plate",
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-              },
-              child: Text("Log In", style: TextStyle(fontSize: 18)),
-            ),
-            SizedBox(height: 10),
+              SizedBox(height: 40),
 
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.green,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                minimumSize: Size(250, 50),
+              // Log In button
+              _buildButton(
+                context,
+                label: "Log In",
+                routeName: "/login",
               ),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SignupScreen()));
-              },
-              child: Text("Sign Up", style: TextStyle(fontSize: 18)),
-            ),
-          ],
+              SizedBox(height: 16),
+
+              // Sign Up button 
+              _buildButton(
+                context,
+                label: "Sign Up",
+                routeName: "/signup",
+              ),
+              SizedBox(height: 16),
+
+              // Admin login button
+              _buildButton(
+                  context,
+                  label: "Sign in as Admin",
+                  routeName: "/admin",
+                  isPrimary: true),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  Widget _buildButton(BuildContext context, {
+    required String label,
+    required String routeName,
+    bool isPrimary = false,
+  }) {
+    return ElevatedButton(
+      onPressed: () => Navigator.pushNamed(context, routeName),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isPrimary ? Colors.blue : Colors.white,
+        foregroundColor: isPrimary ? Colors.white : Colors.green,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        minimumSize: Size(250, 50),
+      ),
+      child: Text(label, style: TextStyle(fontSize: 18)),
+    );
+  }
+
 }

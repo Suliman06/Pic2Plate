@@ -27,7 +27,6 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
     _loadData();
   }
 
-  // Load user and ingredient data
   Future<void> _loadData() async {
     setState(() {
       _isLoading = true;
@@ -81,7 +80,6 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
     }
   }
 
-  // Filter ingredients based on search query
   void _filterIngredients(String query) {
     setState(() {
       if (query.isEmpty) {
@@ -95,7 +93,6 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
     });
   }
 
-  // Add or remove ingredient from selection
   void _toggleIngredient(String ingredient) {
     setState(() {
       if (_selectedIngredients.contains(ingredient)) {
@@ -133,7 +130,6 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
           ? Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // Ingredient search bar
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: TextField(
@@ -149,7 +145,6 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
                   ),
                 ),
                 
-                // Display selected ingredients
                 if (_selectedIngredients.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -169,7 +164,7 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
                 
                 SizedBox(height: 8),
                 
-                // Ingredient list view
+                
                 Expanded(
                   child: _filteredIngredients.isEmpty
                       ? Center(child: Text("No ingredients found"))
@@ -205,7 +200,6 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Save ingredients button
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -219,7 +213,6 @@ class _AddIngredientsPageState extends State<AddIngredientsPage> {
                 ),
               ),
               SizedBox(width: 16),
-              // Navigate to recipe search page
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(

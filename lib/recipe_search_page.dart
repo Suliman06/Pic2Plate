@@ -1,7 +1,8 @@
 // Page to display recipes matched to the user's selected ingredients
 import 'package:flutter/material.dart';
 import 'recipe_service.dart';
-import 'recipe_details_page.dart';
+import 'recipe_details_page.dart' as details;
+import 'utils.dart';
 
 class RecipeSearchPage extends StatefulWidget {
   final List<String> userIngredients;
@@ -27,7 +28,7 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
     List<Map<String, dynamic>> recipes = await _recipeService.searchRecipesByIngredients(widget.userIngredients);
 
     List<Map<String, dynamic>> rankedRecipes = recipes.map((recipe) {
-      List<String> ingredients = RecipeDetailsPage.ensureStringList(recipe["ingredients"]);
+      List<String> ingredients = ensureStringList(recipe["ingredients"]);
       int matchCount = ingredients.where((ingredient) => widget.userIngredients.contains(ingredient)).length;
 
       return {
@@ -110,15 +111,15 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
           }
 
           final rankedRecipes = snapshot.data!;
-
+          // Display list of recipe cards
           return ListView.builder(
             padding: EdgeInsets.all(16),
             itemCount: rankedRecipes.length,
             itemBuilder: (context, index) {
               final recipe = rankedRecipes[index];
-              List<String> ingredients = RecipeDetailsPage.ensureStringList(recipe["ingredients"]);
-              List<String> steps = RecipeDetailsPage.ensureStringList(recipe["steps"]);
-              List<String> allergens = RecipeDetailsPage.ensureStringList(recipe["allergens"]);
+              List<String> ingredients = ensureStringList(recipe["ingredients"]);
+              List<String> steps = ensureStringList(recipe["steps"]);
+              List<String> allergens = ensureStringList(recipe["allergens"]);
 
               bool isPerfectMatch = recipe['matchCount'] == widget.userIngredients.length;
 
@@ -133,31 +134,31 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
                   contentPadding: EdgeInsets.all(12),
                   leading: recipe['image'] != null && !recipe['image'].toString().startsWith('assets')
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            recipe['image'].toString(),
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 60,
-                                height: 60,
-                                color: Colors.grey[300],
-                                child: Icon(Icons.restaurant, color: Colors.grey[600]),
-                              );
-                            },
-                          ),
-                        )
-                      : Container(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      recipe['image'].toString(),
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
                           width: 60,
                           height: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.green[100],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(Icons.restaurant, color: Colors.green[700]),
-                        ),
+                          color: Colors.grey[300],
+                          child: Icon(Icons.restaurant, color: Colors.grey[600]),
+                        );
+                      },
+                    ),
+                  )
+                      : Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.green[100],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.restaurant, color: Colors.green[700]),
+                  ),
                   title: Text(
                     recipe["title"].toString(),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -207,7 +208,8 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => RecipeDetailsPage(
+                        builder: (context) => details.RecipeDetailsPage(
+                          recipeId: recipe['id'] ?? '',
                           recipeName: recipe["title"].toString(),
                           description: recipe["description"].toString(),
                           ingredients: ingredients,
@@ -226,4 +228,11 @@ class _RecipeSearchPageState extends State<RecipeSearchPage> {
       ),
     );
   }
+}
+
+List<String> ensureStringList(dynamic items) {
+  if (items == null) return [];
+  if (items is String) return [items];
+  if (items is List) return items.map((e) => e.toString()).toList();
+  return [];
 }

@@ -72,7 +72,7 @@ class AuthService {
 
       await user.updatePassword(newPassword);
 
-      await _firestore.collection('users').doc(userId).update({
+      await _firestore.collection('Users').doc(userId).update({
         'passwordUpdatedAt': FieldValue.serverTimestamp(),
         'passwordResetComplete': true,
       });

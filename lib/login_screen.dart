@@ -32,12 +32,10 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscureConfirmPassword = true;
 
   void _signIn() async {
-    // Clear previous errors
-    setState(() {
+     setState(() {
       _errorMessage = null;
     });
 
-    // Validate form
     if (!_formKey.currentState!.validate()) {
       return;
     }

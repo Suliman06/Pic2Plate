@@ -71,48 +71,43 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
     }
   }
 
-  // Load ingredient categories from Firestore / use defaults
-  Future<void> _loadCategories() async {
-    try {
-      final QuerySnapshot snapshot =
-          await FirebaseFirestore.instance.collection('ingredientCategories').get();
-      
-      _categories = snapshot.docs.map((doc) {
-        return {
-          'id': doc.id,
-          'name': doc['name'] as String,
-          'icon': doc['icon'] as String? ?? 'restaurant',
-          'color': doc['color'] as String? ?? '4CAF50',
-        };
-      }).toList();
+Future<void> _loadCategories() async {
+  try {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('ingredientCategories')
+        .orderBy('name')
+        .get();
 
-      if (_categories.isEmpty) {
-        _categories = [
-          {'id': 'fruits', 'name': 'Fruits', 'icon': 'nutrition', 'color': 'FF9800'},
-          {'id': 'vegetables', 'name': 'Vegetables', 'icon': 'eco', 'color': '4CAF50'},
-          {'id': 'dairy', 'name': 'Dairy', 'icon': 'egg', 'color': '2196F3'},
-          {'id': 'meat', 'name': 'Meat', 'icon': 'lunch_dining', 'color': 'F44336'},
-          {'id': 'grains', 'name': 'Grains & Bread', 'icon': 'grain', 'color': 'FFC107'},
-          {'id': 'spices', 'name': 'Spices & Herbs', 'icon': 'spa', 'color': '9C27B0'},
-          {'id': 'beverages', 'name': 'Beverages', 'icon': 'local_cafe', 'color': '009688'},
-          {'id': 'snacks', 'name': 'Snacks', 'icon': 'cookie', 'color': 'FFEB3B'},
-          {'id': 'seafood', 'name': 'Seafood', 'icon': 'set_meal', 'color': '2196F3'},
-          {'id': 'bakery', 'name': 'Bakery', 'icon': 'bakery_dining', 'color': '8D6E63'},
-          {'id': 'condiments', 'name': 'Condiments', 'icon': 'kitchen', 'color': 'FFC107'},
-          {'id': 'herbs', 'name': 'Herbs', 'icon': 'eco', 'color': '388E3C'},
-        ];
-      }
-    } catch (e) {
-      print('Error loading categories: $e');
+    final cats = snapshot.docs.map((doc) {
+      final data = doc.data()! as Map<String, dynamic>;
+      return {
+        'id':       doc.id,
+        'name':     data['name']  ?? doc.id,
+        'icon':     data['icon']  ?? 'category',
+        'color':    data['color'] ?? '4CAF50',
+      };
+    }).toList();
+
+    setState(() {
+      _categories = cats;
+    });
+  } catch (e) {
+    print('Error loading categories: $e');
+    // Optional fallback to defaults
+    setState(() {
       _categories = [
-        {'id': 'vegetables', 'name': 'Vegetables', 'icon': 'eco', 'color': '4CAF50'},
-        {'id': 'fruits', 'name': 'Fruits', 'icon': 'nutrition', 'color': 'FF9800'},
-        {'id': 'dairy', 'name': 'Dairy', 'icon': 'egg', 'color': '2196F3'},
-        {'id': 'other', 'name': 'Other', 'icon': 'category', 'color': '9E9E9E'},
+        {'id': 'fruits',      'name': 'Fruits',      'icon': 'nutrition',      'color': 'FF9800'},
+        {'id': 'vegetables',  'name': 'Vegetables',  'icon': 'eco',            'color': '4CAF50'},
+        {'id': 'dairy',       'name': 'Dairy',       'icon': 'egg',            'color': '2196F3'},
+        {'id': 'other',       'name': 'Other',       'icon': 'category',       'color': '9E9E9E'},
       ];
-    }
+    });
   }
-
+}
+String _beautify(String id) {
+  if (id.isEmpty) return id;
+  return id[0].toUpperCase() + id.substring(1);
+}
   Color _getColorFromHex(String hexColor) {
     hexColor = hexColor.replaceAll('#', '');
     if (hexColor.length == 6) {
@@ -319,7 +314,6 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
                     ),
                   SizedBox(height: 20),
                   
-                  // When there's no active search, show the categories grid along with a Find Recipes button
                   if (_searchController.text.isEmpty) ...[
                     Text(
                       "Categories",
@@ -377,8 +371,7 @@ class _IngredientCategoriesPageState extends State<IngredientCategoriesPage> {
                       ),
                     ),
                   ]
-                  // If a search query is active, show the filtered ingredients list
-                  else
+                   else
                     Expanded(
                       child: ListView.builder(
                         itemCount: _filteredAllIngredients.length,

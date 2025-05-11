@@ -20,11 +20,9 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isLoading = true;
   bool isEditing = false;
   
-  // Controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   
-  // Diet and allergies options
   final List<String> dietOptions = [
     'Vegetarian', 'Vegan', 'Pescatarian', 'Keto', 
     'Paleo', 'Low Carb', 'Gluten Free', 'Dairy Free'
@@ -92,14 +90,13 @@ class _ProfilePageState extends State<ProfilePage> {
         isLoading = true;
       });
       
-      // Update local profile object
+      
       userProfile!.name = _nameController.text.trim();
       userProfile!.email = _emailController.text.trim();
       
       // Save to Firestore
       await _firestoreService.updateUserProfile(userProfile!);
       
-      // Update Auth display name if needed
       if (currentUser?.displayName != userProfile!.name) {
         await currentUser?.updateDisplayName(userProfile!.name);
       }
@@ -233,7 +230,6 @@ Future<void> _deleteAccount(String password) async {
     return;
   }
   
-  // Show loading indicator
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -273,7 +269,6 @@ Future<void> _deleteAccount(String password) async {
     
     Navigator.of(context, rootNavigator: true).pop();
     
-    // Navigate to login screen
     Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     
   } on FirebaseAuthException catch (e) {
@@ -302,7 +297,6 @@ Future<void> _deleteAccount(String password) async {
 // Method to delete user data from Firestore
 Future<void> _deleteUserData(String userId) async {
   try {
-    // Delete user document
     await FirebaseFirestore.instance.collection("Users").doc(userId).delete();
     
     final batch = FirebaseFirestore.instance.batch();
@@ -325,7 +319,6 @@ Future<void> _deleteUserData(String userId) async {
       batch.delete(doc.reference);
     });
     
-    // Commit the batch
     await batch.commit();
     
     print("User data deleted successfully");
@@ -382,7 +375,6 @@ Future<void> _deleteUserData(String userId) async {
             
             SizedBox(height: 24),
             
-            // Basic info section
             Card(
               elevation: 2,
               child: Padding(
@@ -670,7 +662,6 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     final String newPassword = _newPasswordController.text.trim();
     final String confirmPassword = _confirmPasswordController.text.trim();
     
-    // Validate inputs
     if (currentPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("All fields are required"), backgroundColor: Colors.red),
@@ -697,7 +688,6 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     });
     
     try {
-      // Get current user
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         setState(() {
@@ -712,10 +702,8 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         password: currentPassword,
       );
       
-      // Re-authenticate
       await user.reauthenticateWithCredential(credential);
       
-      // Update password
       await user.updatePassword(newPassword);
       
       setState(() {

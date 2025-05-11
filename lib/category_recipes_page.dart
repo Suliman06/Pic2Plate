@@ -1,80 +1,93 @@
-// displays recipes filtered by category
+
 import 'package:flutter/material.dart';
-import 'recipe_service.dart';
-import 'recipe_details_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'recipe_details_page.dart' as details;
+import 'widgets/recipe_card.dart';
 
-class CategoryRecipesPage extends StatefulWidget {
-  final String category;
-
-  CategoryRecipesPage({required this.category});
-
-  @override
-  _CategoryRecipesPageState createState() => _CategoryRecipesPageState();
+Future<void> _recordHistory(Map<String, dynamic> recipe) async {
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+  await FirebaseFirestore.instance.collection('history').add({
+    'userId'      : uid,
+    'recipeId'    : recipe['id'],
+    'title'       : recipe['title'],
+    'calories'    : recipe['calories'],
+    'description' : recipe['description'],
+    'ingredients' : recipe['ingredients'],
+    'steps'       : recipe['steps'],
+    'isVegetarian': recipe['isVegetarian'],
+    'allergens'   : recipe['allergens'],
+    'viewedAt'    : FieldValue.serverTimestamp(),
+  });
 }
 
-class _CategoryRecipesPageState extends State<CategoryRecipesPage> {
-  final RecipeService _recipeService = RecipeService();
-  late Future<List<Map<String, dynamic>>> _recipesFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _recipesFuture = _recipeService.getRecipesByCategory(widget.category);
-  }
+class CategoryRecipesPage extends StatelessWidget {
+  final String category;
+  const CategoryRecipesPage({super.key, required this.category});
 
   @override
   Widget build(BuildContext context) {
+    final catQuery = _capitalize(category);
+    final recipesStream = FirebaseFirestore.instance
+        .collection('recipes')
+        .where('category', isEqualTo: catQuery)
+        .snapshots();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.category} Recipes"),
+        title: Text('$catQuery Recipes'),
         backgroundColor: Colors.green[600],
-        elevation: 0,
       ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _recipesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+      body: StreamBuilder<QuerySnapshot>(
+        stream: recipesStream,
+        builder: (ctx, snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
           }
-
-          if (snapshot.hasError) {
-            return Center(child: Text('Error loading recipes: ${snapshot.error}'));
+          if (snap.hasError) {
+            return Center(child: Text('Error: ${snap.error}'));
           }
-
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          final docs = snap.data!.docs;
+          if (docs.isEmpty) {
             return Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.no_food, size: 80, color: Colors.grey),
-                  SizedBox(height: 20),
-                  Text(
-                    "No recipes found for ${widget.category}",
-                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-                  ),
+                  const Icon(Icons.no_food, size: 80, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  Text('No recipes found for $catQuery',
+                      style: TextStyle(color: Colors.grey[700])),
                 ],
               ),
             );
           }
-
-          final recipes = snapshot.data!;
-
           return ListView.builder(
-            padding: EdgeInsets.all(16),
-            itemCount: recipes.length,
-            itemBuilder: (context, index) {
-              final recipe = recipes[index];
+            padding: const EdgeInsets.all(16),
+            itemCount: docs.length,
+            itemBuilder: (ctx, i) {
+              final doc  = docs[i];
+              final data = doc.data()! as Map<String, dynamic>;
+              final recipe = {
+                'id'          : doc.id,
+                'title'       : data['title']       as String? ?? 'Untitled',
+                'description' : data['description'] as String? ?? '',
+                'calories'    : data['calories']    ?? 0,
+                'image'       : data['image']       as String? ?? '',
+                'ingredients' : List<String>.from(data['ingredients'] ?? []),
+                'steps'       : List<String>.from(data['steps']       ?? []),
+                'isVegetarian': data['isVegetarian'] == true,
+                'allergens'   : List<String>.from(data['allergens']    ?? []),
+              };
 
               return Card(
-                margin: EdgeInsets.symmetric(vertical: 8),
+                margin: const EdgeInsets.symmetric(vertical: 8),
                 elevation: 2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(12),
-
-                  leading: recipe['image'] != null && !recipe['image'].startsWith('assets')
+                  contentPadding: const EdgeInsets.all(12),
+                  leading: recipe['image'] != ''
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.network(
@@ -82,80 +95,56 @@ class _CategoryRecipesPageState extends State<CategoryRecipesPage> {
                             width: 60,
                             height: 60,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 60,
-                                height: 60,
-                                color: Colors.grey[300],
-                                child: Icon(Icons.restaurant, color: Colors.grey[600]),
-                              );
-                            },
+                            errorBuilder: (_, __, ___) => _placeholderIcon(),
                           ),
                         )
-                      : Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.green[100],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(Icons.restaurant, color: Colors.green[700]),
-                        ),
-
-                  // Display recipe title and description
-                  title: Text(
-                    recipe["title"],
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                      : _placeholderIcon(),
+                  title: Text(recipe['title'],
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 4),
-                      Text(
-                        recipe["description"],
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 4),
+                      Text(recipe['description'],
+                          maxLines: 2, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 6),
                       Row(
                         children: [
-                          if (recipe["isVegetarian"] == true)
+                          if (recipe['isVegetarian'])
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
                                 color: Colors.green[100],
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: Text(
-                                "Vegetarian",
-                                style: TextStyle(fontSize: 12, color: Colors.green[800]),
-                              ),
+                              child: const Text('Vegetarian',
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.green)),
                             ),
-                          SizedBox(width: 8),
-                          Icon(Icons.local_fire_department, size: 16, color: Colors.orange),
-                          SizedBox(width: 4),
-                          Text(
-                            recipe["calories"] ?? "0 kcal",
-                            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.local_fire_department,
+                              size: 16, color: Colors.orange),
+                          const SizedBox(width: 4),
+                          Text('${recipe['calories']} kcal',
+                              style: const TextStyle(fontSize: 12)),
                         ],
                       ),
                     ],
                   ),
-
-                  // On tap navigate to recipe details page
-                  onTap: () {
+                  onTap: () async {
+                    await _recordHistory(recipe);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => RecipeDetailsPage(
-                          recipeName: recipe["title"],
-                          description: recipe["description"],
-                          ingredients: (recipe["ingredients"] as List<dynamic>).cast<String>(),
-                          steps: (recipe["steps"] as List<dynamic>).cast<String>(),
-                          isVegetarian: recipe["isVegetarian"],
-                          allergens: (recipe["allergens"] as List<dynamic>).cast<String>(),
+                        builder: (_) => details.RecipeDetailsPage(
+                          recipeId:      recipe['id'],
+                          recipeName:    recipe['title'],
+                          description:   recipe['description'],
+                          ingredients:   recipe['ingredients'],
+                          steps:         recipe['steps'],
+                          isVegetarian:  recipe['isVegetarian'],
+                          allergens:     recipe['allergens'],
                         ),
                       ),
                     );
@@ -168,4 +157,17 @@ class _CategoryRecipesPageState extends State<CategoryRecipesPage> {
       ),
     );
   }
+
+  Widget _placeholderIcon() => Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Icon(Icons.restaurant, color: Colors.grey),
+      );
+
+  String _capitalize(String s) =>
+      s.isEmpty ? s : s[0].toUpperCase() + s.substring(1).toLowerCase();
 }

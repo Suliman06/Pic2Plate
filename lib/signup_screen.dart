@@ -37,8 +37,7 @@ class _SignupScreenState extends State<SignupScreen> {
   
   // Password validation
   bool _isPasswordValid(String password) {
-    // At least 8 characters, 1 uppercase letter, 1 number, and 1 special character
-    final RegExp passwordRegExp = 
+       final RegExp passwordRegExp = 
       RegExp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$');
     return passwordRegExp.hasMatch(password);
   }
@@ -53,9 +52,8 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
-  // Validate all inputs before proceeding to phone verification
+  // Validate all inputs 
   Future<bool> _validateInputs() async {
-    // Reset all error states
     setState(() {
       _nameError = null;
       _emailError = null;
@@ -69,15 +67,12 @@ class _SignupScreenState extends State<SignupScreen> {
     String password = _passwordController.text.trim();
     String phoneNumber = _phoneController.text.trim();
 
-    // Name validation
     if (name.isEmpty) {
       setState(() {
         _nameError = 'Please enter your name';
       });
       isValid = false;
     }
-
-    // Email validation
     if (email.isEmpty) {
       setState(() {
         _emailError = 'Please enter your email';
@@ -89,7 +84,6 @@ class _SignupScreenState extends State<SignupScreen> {
       });
       isValid = false;
     } else {
-      // Check if email already exists
       bool emailExists = await _checkIfEmailExists(email);
       if (emailExists) {
         setState(() {
@@ -99,7 +93,6 @@ class _SignupScreenState extends State<SignupScreen> {
       }
     }
 
-    // Password validation
     if (password.isEmpty) {
       setState(() {
         _passwordError = 'Please enter a password';
@@ -112,7 +105,6 @@ class _SignupScreenState extends State<SignupScreen> {
       isValid = false;
     }
 
-    // Phone validation
     if (phoneNumber.isEmpty) {
       setState(() {
         _phoneError = 'Please enter your phone number';
@@ -125,7 +117,6 @@ class _SignupScreenState extends State<SignupScreen> {
       isValid = false;
     }
 
-    // Basic phone number format validation
     if (phoneNumber.isEmpty) {
       setState(() {
         _phoneError = 'Please enter your phone number';
@@ -203,7 +194,6 @@ class _SignupScreenState extends State<SignupScreen> {
       _isLoading = true;
     });
 
-    // Validate all inputs before proceeding
     bool isValid = await _validateInputs();
     
     if (!isValid) {
@@ -250,7 +240,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
             await user.linkWithCredential(emailCredential);
 
-            // Save user data to Firestore
             await _firestoreService.saveUserData(user.uid, email, name);
 
             ScaffoldMessenger.of(context).showSnackBar(
@@ -268,7 +257,6 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
             );
           } on FirebaseAuthException catch (e) {
-            // Handle email credential linking errors
             if (e.code == 'email-already-in-use') {
               setState(() {
                 _emailError = 'This email is already associated with another account.';
@@ -345,7 +333,6 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
               
-              // Name field
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -360,7 +347,6 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               SizedBox(height: 16),
               
-              // Email field
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -376,7 +362,6 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               SizedBox(height: 16),
               
-              // Password field
               TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
@@ -401,7 +386,6 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               SizedBox(height: 16),
               
-              // Phone number field
               TextFormField(
                 controller: _phoneController,
                 decoration: InputDecoration(
@@ -423,7 +407,6 @@ class _SignupScreenState extends State<SignupScreen> {
               
 
               
-              // Sign Up button
               ElevatedButton(
                 onPressed: _isLoading ? null : _signUp,
                 child: _isLoading
@@ -451,7 +434,6 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               SizedBox(height: 16),
               
-              // Already have an account section
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

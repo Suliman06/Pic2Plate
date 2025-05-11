@@ -11,7 +11,6 @@ class VisionService {
 
   VisionService({required this.apiKey});
 
-  /// Picks an image from the camera
   Future<File?> pickImage() async {
     try {
       final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
@@ -30,7 +29,6 @@ class VisionService {
   }
 
   /// Sends the image to the Google Cloud Vision API for label detection
-  /// Returns a list of label descriptions
   Future<List<String>> detectLabels(File imageFile) async {
     final base64Image = await _getBase64Image(imageFile);
 

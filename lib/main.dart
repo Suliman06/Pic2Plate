@@ -11,6 +11,7 @@ import 'history_page.dart';
 import 'more_page.dart';
 import 'privacy_policy_page.dart';
 import 'settings_page.dart';
+import 'admin_login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         "/auth": (context) => AuthSelection(),
         "/login": (context) => LoginScreen(),
         "/signup": (context) => SignupScreen(),
+        '/admin': (_) => AdminLoginScreen(),
         "/home": (context) => HomePage(isPremiumUser: false),
         "/favourites": (context) => FavouritesPage(),
         "/feedback": (context) => FeedbackPage(),

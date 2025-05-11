@@ -34,11 +34,12 @@ class RecipeService {
           'title': recipeData['title'] ?? 'Unknown Recipe',
           'description': recipeData['description'] ?? '',
           'ingredients': _normalizeIngredientsList(recipeData['ingredients']),
-          'steps': recipeData['steps'] ?? [],
+          'steps': _normalizeIngredientsList(recipeData['steps']),
           'isVegetarian': recipeData['isVegetarian'] ?? false,
-          'allergens': recipeData['allergens'] ?? [],
+          'allergens': _normalizeIngredientsList(recipeData['allergens']),
           'calories': recipeData['calories'] ?? '0 kcal',
           'image': recipeData['image'] ?? 'assets/images/default-recipe.png',
+          'category': category,
         });
       }
 
@@ -66,8 +67,8 @@ class RecipeService {
             .toList();
 
         bool containsAnyIngredient = normalizedUserIngredients.any((ingredient) {
-          return recipeIngredients.any((recipeIngredient) => 
-            recipeIngredient.contains(ingredient) || ingredient.contains(recipeIngredient));
+          return recipeIngredients.any((recipeIngredient) =>
+          recipeIngredient.contains(ingredient) || ingredient.contains(recipeIngredient));
         });
 
         if (containsAnyIngredient) {
@@ -81,6 +82,7 @@ class RecipeService {
             'allergens': _normalizeIngredientsList(recipeData['allergens']),
             'calories': recipeData['calories'] ?? '0 kcal',
             'image': recipeData['image'] ?? 'assets/images/default-recipe.png',
+            'category': recipeData['category'] ?? 'Uncategorized',
           });
         }
       }
@@ -115,6 +117,7 @@ class RecipeService {
           'allergens': _normalizeIngredientsList(recipeData['allergens']),
           'calories': recipeData['calories'] ?? '0 kcal',
           'image': recipeData['image'] ?? 'assets/images/default-recipe.png',
+          'category': recipeData['category'] ?? category,
         });
       }
 

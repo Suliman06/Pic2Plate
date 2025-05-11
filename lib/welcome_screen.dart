@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
-import 'signup_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -8,30 +6,44 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.green[600],
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // App title
-            Text(
-              "Pic2Plate",
-              style: TextStyle(fontSize: 36, color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 50),
-
-            // Login button
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, "/login"),
-              child: Text("Login"),
-            ),
-
-            // Sign up button
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, "/signup"),
-              child: Text("Sign Up"),
-            ),
-          ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "late",
+                style: TextStyle(
+                  fontSize: 36,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 50),
+              _buildButton(context, "Log In", "/login"),
+              SizedBox(height: 16),
+              _buildButton(context, "Sign Up", "/signup"),
+              SizedBox(height: 16),
+              _buildButton(context, "Sign in as Admin", "/admin"),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildButton(BuildContext context, String text, String route) {
+    return ElevatedButton(
+      onPressed: () => Navigator.pushNamed(context, route),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.green[700],
+        minimumSize: Size(double.infinity, 48),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
+      child: Text(text),
     );
   }
 }

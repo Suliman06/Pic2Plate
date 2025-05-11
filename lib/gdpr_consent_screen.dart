@@ -46,7 +46,6 @@ class _GDPRConsentScreenState extends State<GDPRConsentScreen> {
     if (user != null) {
       String userId = user.uid;
 
-      // Attempt to delete user data from Firestore
       await FirebaseFirestore.instance.collection('users').doc(userId).delete().then((_) {
         print("User document deleted from Firestore.");
       }).catchError((error) {
@@ -196,7 +195,7 @@ class _GDPRConsentScreenState extends State<GDPRConsentScreen> {
             SizedBox(height: 10),
             Center(
               child: TextButton(
-                onPressed: _declineConsent, // Calls function to remove user data
+                onPressed: _declineConsent,
                 child: Text(
                   "Decline",
                   style: TextStyle(color: Colors.grey[700]),
